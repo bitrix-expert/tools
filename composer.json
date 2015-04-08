@@ -2,7 +2,7 @@
   "name": "bitrix-expert/tools",
   "description": "Helpers for developers on Bitrix",
   "keywords": ["bitrix", "tools"],
-  "type": "",
+  "type": "library",
   "license": "MIT",
   "support": {
     "issues": "https://github.com/bitrix-expert/tools/issues",
