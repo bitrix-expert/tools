@@ -1,0 +1,17 @@
+{
+  "name": "bitrix-expert/tools",
+  "description": "Helpers for developers on Bitrix",
+  "keywords": ["bitrix", "tools"],
+  "type": "",
+  "license": "MIT",
+  "support": {
+    "issues": "https://github.com/bitrix-expert/tools/issues",
+    "source": "https://github.com/bitrix-expert/tools/"
+  },
+  "authors": [
+    {
+      "name": "Nik Samokhvalov",
+      "email": "nik@samokhvalov.info"
+    }
+  ]
+}
