@@ -13,7 +13,7 @@ use Bitrix\Main\Application;
 /**
  * Helper for working with infoblocks. All requests will be cached.
  *
- * @author Nik Samokhvalov <nik@sanokhvalov.info>
+ * @author Nik Samokhvalov <nik@samokhvalov.info>
  */
 class Iblocks
 {
