@@ -13,5 +13,8 @@
       "name": "Nik Samokhvalov",
       "email": "nik@samokhvalov.info"
     }
-  ]
+  ],
+  "autoload": {
+    "psr-4": {"Bex\\Tools\\": ""}
+  }
 }
