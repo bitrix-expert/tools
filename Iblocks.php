@@ -155,6 +155,11 @@ class Iblocks
         $cacheId = false;
         $cacheDir = static::CACHE_DIR;
 
+        if (!Main\Loader::includeModule('iblock'))
+        {
+            throw new Main\LoaderException('Failed include module "iblock"');
+        }
+
         if ($cache->initCache(static::CACHE_TIME, $cacheId, $cacheDir))
         {
             $datas = $cache->getVars();
