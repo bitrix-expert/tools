@@ -48,6 +48,30 @@ class Groups
         );
     }
 
+    /**
+     * Get STRING_ID of the user group by ID
+     *
+     * @param string $groupId id of the user group
+     * @param bool $withoutException Throw exception in will not found result, default false
+     * @return bool|string
+     * @throws \Bitrix\Main\ArgumentNullException
+     */
+    public static function getCode($groupId, $withoutException = false)
+    {
+        if (!$groupId)
+        {
+            throw new Main\ArgumentNullException('Id of user group');
+        }
+
+        return static::getData(
+            [
+                'object' => 'groupCode',
+                'groupId' => $groupId
+            ],
+            $withoutException
+        );
+    }
+
     private static function getData($filter = [], $withoutException = false)
     {
         $datas = [];
@@ -73,6 +97,7 @@ class Groups
                 if ($arGroup['STRING_ID'])
                 {
                     $datas['GROUPS'][$arGroup['STRING_ID']] = $arGroup['ID'];
+                    $datas['CODES'][$arGroup['ID']] = $arGroup['STRING_ID'];
                 }
             }
 
@@ -89,12 +114,13 @@ class Groups
             }
         }
 
-        $groupId = $datas['GROUPS'][$filter['groupCode']];
-
         switch ($filter['object'])
         {
             case 'group':
-                $return = (int) $groupId;
+                $return = (int) $datas['GROUPS'][$filter['groupCode']];
+                break;
+            case 'groupCode':
+                $return = $datas['CODES'][$filter['groupId']];
                 break;
         }
 
