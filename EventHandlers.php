@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @link https://github.com/bitrix-expert/tools
  * @license MIT
@@ -7,12 +6,16 @@
 
 namespace Bex\Tools;
 
+/**
+ * Class implements handlers on tool entities CRUD events.
+ * Clears created cache
+ */
 class EventHandlers
 {
     const CACHE_TAG_GROUP = 'group_tools_cache';
 
     /**
-     * Обработчик после удаления группы пользователей
+     * Handler after user group delete event
      * @param $id
      */
     public static function onGroupDeleteHandler($id)
@@ -21,7 +24,7 @@ class EventHandlers
     }
 
     /**
-     * Обработчик после добавления группы пользователей
+     * Handler after user group add event
      * @param $arFields
      */
     public static function onAfterGroupAddHandler($arFields)
@@ -30,7 +33,7 @@ class EventHandlers
     }
 
     /**
-     * Обработчик после обновления группы пользователей
+     * Handler after user group update event
      * @param $id
      * @param $arFields
      */
@@ -39,6 +42,9 @@ class EventHandlers
         static::deleteGroupCache();
     }
 
+    /**
+     * Clears user group cache by tag
+     */
     protected static function deleteGroupCache()
     {
         global $CACHE_MANAGER;
