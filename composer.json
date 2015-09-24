@@ -15,6 +15,7 @@
     }
   ],
   "autoload": {
-    "psr-4": {"Bex\\Tools\\": ""}
+    "psr-4": {"Bex\\Tools\\": ""},
+    "files": ["./bootstrap.php"]
   }
 }

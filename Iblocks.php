@@ -169,7 +169,7 @@ class Iblocks
             $cache->startDataCache();
             Application::getInstance()->getTaggedCache()->startTagCache($cacheDir);
 
-            $rsIblocks = \CIBlock::GetList([], []);
+            $rsIblocks = \CIBlock::GetList([], ['CHECK_PERMISSIONS' => 'N']);
 
             while ($arIblock = $rsIblocks->Fetch())
             {
