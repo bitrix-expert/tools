@@ -11,9 +11,8 @@ use Bitrix\Main\Application;
 
 /**
  * Helper for working with user groups. All requests will be cached.
- *
  */
-class Groups
+class GroupTools extends BexTools
 {
     /**
      * Cache time

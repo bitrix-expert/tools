@@ -15,7 +15,7 @@ use Bitrix\Main\Application;
  *
  * @author Nik Samokhvalov <nik@samokhvalov.info>
  */
-class Iblocks
+class IblockTools extends BexTools
 {
     /**
      * Cache time
@@ -25,6 +25,74 @@ class Iblocks
      * Directory of the cache
      */
     const CACHE_DIR = 'bex_tools/iblocks';
+
+    protected $type;
+    protected $id;
+    protected $code;
+
+    public function __construct(array $parameters)
+    {
+        $parameters = $this->prepareParameters($parameters);
+
+        if (isset($parameters['iblockType'])) {
+            $this->type = $parameters['iblockType'];
+        }
+
+        if (isset($parameters['iblockCode'])) {
+            $this->code = $parameters['iblockCode'];
+        }
+
+        if (isset($parameters['iblockId'])) {
+            $this->id = $parameters['iblockId'];
+        }
+
+        if (!isset($this->id)) {
+            if (!isset($this->type)) {
+                throw new Main\ArgumentNullException('iblock type');
+            } elseif (!isset($this->code)) {
+                throw new Main\ArgumentNullException('iblock code');
+            }
+        }
+    }
+
+    private function prepareParameters(array $parameters)
+    {
+        foreach ($parameters as $code => &$param)
+        {
+            if ($code === 'iblockId') {
+                intval($param);
+            } else {
+                trim(htmlspecialchars($param));
+            }
+        }
+
+        return $parameters;
+    }
+
+    public static function find($type, $code)
+    {
+        return new static([
+            'iblockType' => $type,
+            'iblockCode' => $code,
+        ]);
+    }
+
+    public static function findById($id)
+    {
+        return new static([
+            'iblockId' => $id
+        ]);
+    }
+
+    public function id()
+    {
+
+    }
+
+    //////////////////////////////////////
+    // OLD
+    //////////////////////////////////////
+
 
     /**
      * Get ID of the infoblock by code
