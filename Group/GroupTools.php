@@ -1,11 +1,13 @@
 <?php
 /**
  * @link https://github.com/bitrix-expert/tools
+ * @copyright Copyright © 2015 Nik Samokhvalov
  * @license MIT
  */
 
-namespace Bex\Tools;
+namespace Bex\Tools\Group;
 
+use Bex\Tools\Iblock\BexTools;
 use Bitrix\Main;
 use Bitrix\Main\Application;
 

@@ -5,8 +5,9 @@
  * @license MIT
  */
 
-namespace Bex\Tools;
+namespace Bex\Tools\Iblock;
 
+use Bex\Tools\Finder;
 use Bitrix\Main;
 use Bitrix\Main\Application;
 
@@ -15,7 +16,7 @@ use Bitrix\Main\Application;
  *
  * @author Nik Samokhvalov <nik@samokhvalov.info>
  */
-class IblockTools extends BexTools
+class IblockFinder extends Finder
 {
     /**
      * Cache time
@@ -26,37 +27,45 @@ class IblockTools extends BexTools
      */
     const CACHE_DIR = 'bex_tools/iblocks';
 
-    protected $type;
-    protected $id;
-    protected $code;
+    protected $iblockType;
+    protected $iblockId;
+    protected $iblockCode;
 
     public function __construct(array $parameters)
     {
         $parameters = $this->prepareParameters($parameters);
 
         if (isset($parameters['iblockType'])) {
-            $this->type = $parameters['iblockType'];
+            $this->iblockType = $parameters['iblockType'];
         }
 
         if (isset($parameters['iblockCode'])) {
-            $this->code = $parameters['iblockCode'];
+            $this->iblockCode = $parameters['iblockCode'];
         }
 
         if (isset($parameters['iblockId'])) {
-            $this->id = $parameters['iblockId'];
+            $this->iblockId = $parameters['iblockId'];
         }
 
-        if (!isset($this->id)) {
-            if (!isset($this->type)) {
+        if (!isset($this->iblockId)) {
+            if (!isset($this->iblockType)) {
                 throw new Main\ArgumentNullException('iblock type');
-            } elseif (!isset($this->code)) {
+            } elseif (!isset($this->iblockCode)) {
                 throw new Main\ArgumentNullException('iblock code');
             }
+
+            $this->iblockId = $this->getFromCache([
+                'type' => 'iblockId'
+            ]);
         }
     }
 
     private function prepareParameters(array $parameters)
     {
+        if (!Main\Loader::includeModule('iblock')) {
+            throw new Main\LoaderException('Failed include module "iblock"');
+        }
+
         foreach ($parameters as $code => &$param)
         {
             if ($code === 'iblockId') {
@@ -69,24 +78,129 @@ class IblockTools extends BexTools
         return $parameters;
     }
 
-    public static function find($type, $code)
-    {
-        return new static([
-            'iblockType' => $type,
-            'iblockCode' => $code,
-        ]);
-    }
-
-    public static function findById($id)
-    {
-        return new static([
-            'iblockId' => $id
-        ]);
-    }
-
     public function id()
     {
+        return $this->getFromCache([
+            'type' => 'iblockId'
+        ]);
+    }
 
+    public function type()
+    {
+        return $this->getFromCache([
+            'type' => 'iblockType'
+        ]);
+    }
+
+    public function propId($code)
+    {
+        return $this->getFromCache([
+            'type' => 'propId',
+            'propCode' => $code
+        ]);
+    }
+
+    public function propEnumId($code, $valueXmlId)
+    {
+        return $this->getFromCache([
+            'type' => 'propEnumId',
+            'propCode' => $code,
+            'valueXmlId' => $valueXmlId
+        ]);
+    }
+
+    protected function getValue(array $cache, array $filter)
+    {
+        switch ($filter['type'])
+        {
+            case 'iblockId':
+                $value = (int) $cache['IBLOCKS'][$this->iblockType][$this->iblockCode];
+
+                if ($value <= 0) {
+                    throw new \Exception();
+                }
+
+                return $value;
+                break;
+
+            case 'iblockType':
+                $value = (string) $cache['IBLOCK_TYPES'][$this->iblockId];
+
+                if (strlen($value) <= 0) {
+                    throw new \Exception();
+                }
+
+                return $value;
+                break;
+
+            case 'propId':
+                $value = (int) $cache['PROPS_ID'][$this->iblockId][$filter['propCode']];
+
+                if ($value <= 0) {
+                    throw new \Exception();
+                }
+
+                return $value;
+                break;
+
+            case 'propEnum':
+                $propId = $cache['PROPS_ID'][$this->iblockId][$filter['propCode']];
+
+                $value = (int) $cache['PROPS_ENUM'][$propId][$filter['valueXmlId']];
+
+                if ($value <= 0) {
+                    throw new \Exception();
+                }
+
+                return $value;
+                break;
+        }
+    }
+
+    protected function getItems()
+    {
+        $items = [];
+        $iblockIds = [];
+
+        $rsIblocks = \CIBlock::GetList([], ['CHECK_PERMISSIONS' => 'N']);
+
+        while ($arIblock = $rsIblocks->Fetch())
+        {
+            if ($arIblock['CODE'])
+            {
+                $items['IBLOCKS'][$arIblock['IBLOCK_TYPE_ID']][$arIblock['CODE']] = $arIblock['ID'];
+
+                $iblockIds[] = $arIblock['ID'];
+            }
+
+            $items['IBLOCK_TYPES'][$arIblock['ID']] = $arIblock['IBLOCK_TYPE_ID'];
+        }
+
+        $rsProps = \CIBlockProperty::GetList();
+
+        while ($arProp = $rsProps->Fetch())
+        {
+            $items['PROPS_ID'][$arProp['IBLOCK_ID']][$arProp['CODE']] = $arProp['ID'];
+        }
+
+        $rsPropsEnum = \CIBlockPropertyEnum::GetList();
+
+        while ($arPropEnum = $rsPropsEnum->Fetch())
+        {
+            if ($arPropEnum['PROPERTY_CODE'])
+            {
+                $items['PROPS_ENUM'][$arPropEnum['PROPERTY_ID']][$arPropEnum['XML_ID']] = $arPropEnum['ID'];
+            }
+        }
+
+        foreach ($iblockIds as $id)
+        {
+            Application::getInstance()->getTaggedCache()->registerTag('iblock_id_' . $id);
+        }
+
+        Application::getInstance()->getTaggedCache()->registerTag('iblock_id_new');
+
+        return $items;
     }
 
     //////////////////////////////////////
@@ -292,21 +406,21 @@ class IblockTools extends BexTools
         {
             case 'iblock':
                 $return = (int) $iblockId;
-            break;
+                break;
 
             case 'iblockType':
                 $return = (string) $datas['IBLOCK_TYPES'][$filter['iblockId']];
-            break;
+                break;
 
             case 'propId':
                 $return = (int) $datas['PROPS_ID'][$iblockId][$filter['propCode']];
-            break;
+                break;
 
             case 'propEnum':
                 $propId = $datas['PROPS_ID'][$iblockId][$filter['propCode']];
 
                 $return = (int) $datas['PROPS_ENUM'][$propId][$filter['valueXmlId']];
-            break;
+                break;
         }
 
         if (!$return && !$withoutException)
