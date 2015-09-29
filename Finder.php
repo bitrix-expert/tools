@@ -13,6 +13,34 @@ use Bitrix\Main\Data\Cache;
 
 abstract class Finder
 {
+    protected static $cacheTime;
+    protected static $cacheDir;
+
+    protected function prepareFilter(array $filter)
+    {
+        return $filter;
+    }
+
+    public static function setCacheTime($time)
+    {
+        static::$cacheTime = intval($time);
+    }
+
+    public static function getCacheTime()
+    {
+        return static::$cacheTime;
+    }
+
+    public static function getCacheDir()
+    {
+        return static::$cacheDir;
+    }
+
+    public static function setCacheDir($directory)
+    {
+        static::$cacheDir = trim(htmlspecialchars($directory));
+    }
+
     abstract protected function getValue(array $cache, array $filter);
 
     abstract protected function getItems();
@@ -22,18 +50,18 @@ abstract class Finder
      */
     protected function getFromCache($filter = [])
     {
-        $cache = Cache::createInstance();
-        $cacheId = false;
-        $cacheDir = static::CACHE_DIR;
+        $filter = $this->prepareFilter($filter);
 
-        if ($cache->initCache(static::CACHE_TIME, $cacheId, $cacheDir))
+        $cache = Cache::createInstance();
+
+        if ($cache->initCache($this->getCacheTime(), false, $this->getCacheDir()))
         {
             $items = $cache->getVars();
         }
         else
         {
             $cache->startDataCache();
-            Application::getInstance()->getTaggedCache()->startTagCache($cacheDir);
+            Application::getInstance()->getTaggedCache()->startTagCache($this->getCacheDir());
             
             $items = $this->getItems();
 
