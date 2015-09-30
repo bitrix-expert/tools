@@ -15,28 +15,29 @@ abstract class Finder
 {
     protected static $cacheTime;
     protected static $cacheDir;
+    private $itemsCache;
 
     protected function prepareFilter(array $filter)
     {
         return $filter;
     }
 
-    public static function setCacheTime($time)
+    public function setCacheTime($time)
     {
         static::$cacheTime = intval($time);
     }
 
-    public static function getCacheTime()
+    public function getCacheTime()
     {
         return static::$cacheTime;
     }
 
-    public static function getCacheDir()
+    public function getCacheDir()
     {
         return static::$cacheDir;
     }
 
-    public static function setCacheDir($directory)
+    public function setCacheDir($directory)
     {
         static::$cacheDir = trim(htmlspecialchars($directory));
     }
@@ -52,24 +53,29 @@ abstract class Finder
     {
         $filter = $this->prepareFilter($filter);
 
+        if (is_array($this->itemsCache) && !empty($this->itemsCache))
+        {
+            return $this->getValue($this->itemsCache, $filter);
+        }
+
         $cache = Cache::createInstance();
 
         if ($cache->initCache($this->getCacheTime(), false, $this->getCacheDir()))
         {
-            $items = $cache->getVars();
+            $this->itemsCache = $cache->getVars();
         }
         else
         {
             $cache->startDataCache();
             Application::getInstance()->getTaggedCache()->startTagCache($this->getCacheDir());
-            
-            $items = $this->getItems();
 
-            if (!empty($items))
+            $this->itemsCache = $this->getItems();
+
+            if (!empty($this->itemsCache))
             {
                 Application::getInstance()->getTaggedCache()->endTagCache();
 
-                $cache->endDataCache($items);
+                $cache->endDataCache($this->itemsCache);
             }
             else
             {
@@ -77,6 +83,6 @@ abstract class Finder
             }
         }
 
-        return $this->getValue($items, $filter);
+        return $this->getValue($this->itemsCache, $filter);
     }
 }

@@ -5,7 +5,7 @@
  * @license MIT
  */
 
-namespace Bex\Tools\Iblock;
+namespace Bex\Tools;
 
 use Bitrix\Main;
 

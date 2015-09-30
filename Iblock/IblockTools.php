@@ -8,11 +8,14 @@
 namespace Bex\Tools\Iblock;
 
 use Bitrix\Main;
+use Bex\Tools\BexTools;
 
 /**
  * Helper for working with infoblocks. All requests will be cached.
  *
  * @author Nik Samokhvalov <nik@samokhvalov.info>
+ *
+ * @todo Перехватчики событий, запрещающие создавать ИБ с одинаковыми символьными кодами
  */
 class IblockTools extends BexTools
 {

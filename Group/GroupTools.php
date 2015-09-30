@@ -7,8 +7,8 @@
 
 namespace Bex\Tools\Group;
 
-use Bex\Tools\Iblock\BexTools;
 use Bitrix\Main;
+use Bex\Tools\BexTools;
 
 /**
  * @author Nik Samokhvalov <nik@samokhvalov.info>

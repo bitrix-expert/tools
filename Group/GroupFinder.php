@@ -25,16 +25,20 @@ class GroupFinder extends Finder
     {
         $filter = $this->prepareFilter($filter);
 
-        if (isset($filter['id'])) {
+        if (isset($filter['id']))
+        {
             $this->id = $filter['id'];
         }
 
-        if (isset($filter['code'])) {
+        if (isset($filter['code']))
+        {
             $this->code = $filter['code'];
         }
 
-        if (!isset($this->id)) {
-            if (!isset($this->code)) {
+        if (!isset($this->id))
+        {
+            if (!isset($this->code))
+            {
                 throw new Main\ArgumentNullException('code');
             }
 
@@ -60,17 +64,23 @@ class GroupFinder extends Finder
 
     protected function prepareFilter(array $filter)
     {
-        foreach ($filter as $code => &$value) {
-            if ($code === 'id') {
+        foreach ($filter as $code => &$value)
+        {
+            if ($code === 'id')
+            {
                 intval($value);
 
-                if ($value <= 0) {
+                if ($value <= 0)
+                {
                     throw new Main\ArgumentNullException($code);
                 }
-            } else {
+            }
+            else
+            {
                 trim(htmlspecialchars($value));
 
-                if (strlen($value) <= 0) {
+                if (strlen($value) <= 0)
+                {
                     throw new Main\ArgumentNullException($code);
                 }
             }
@@ -86,17 +96,24 @@ class GroupFinder extends Finder
             case 'groupId':
                 $value = (int) $cache['GROUPS'][$filter['groupCode']];
 
-                if ($value <= 0) {
+                if ($value <= 0)
+                {
                     throw new \Exception();
                 }
-            break;
+                break;
+
             case 'groupCode':
                 $value = $cache['CODES'][$this->id];
 
-                if (strlen($value) <= 0) {
+                if (strlen($value) <= 0)
+                {
                     throw new \Exception();
                 }
-            break;
+                break;
+
+            default:
+                throw new Main\ArgumentException('', 'type');
+                break;
         }
 
         return $value;
@@ -106,7 +123,7 @@ class GroupFinder extends Finder
     {
         $items = [];
 
-        $rsGroups = \CGroup::GetList();
+        $rsGroups = Main\GroupTable::getList();
 
         while ($group = $rsGroups->Fetch())
         {
