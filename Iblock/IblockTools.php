@@ -11,11 +11,9 @@ use Bitrix\Main;
 use Bex\Tools\BexTools;
 
 /**
- * Helper for working with infoblocks. All requests will be cached.
+ * Tools for working with infoblocks.
  *
  * @author Nik Samokhvalov <nik@samokhvalov.info>
- *
- * @todo Перехватчики событий, запрещающие создавать ИБ с одинаковыми символьными кодами
  */
 class IblockTools extends BexTools
 {
@@ -32,5 +30,15 @@ class IblockTools extends BexTools
         return new IblockFinder([
             'iblockId' => $id
         ]);
+    }
+
+    public static function onBeforeIBlockAdd(&$fields)
+    {
+        // @todo Запрещать создавать ИБ с одинаковыми символьными кодами
+    }
+
+    public static function onBeforeIBlockUpdate(&$fields)
+    {
+        // @todo Запрещать создавать ИБ с одинаковыми символьными кодами
     }
 }
