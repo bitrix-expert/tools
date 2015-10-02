@@ -15,7 +15,6 @@ abstract class Finder
 {
     protected static $cacheTime;
     protected static $cacheDir;
-    private $itemsCache;
 
     protected function prepareFilter(array $filter)
     {
@@ -42,40 +41,35 @@ abstract class Finder
         static::$cacheDir = trim(htmlspecialchars($directory));
     }
 
-    abstract protected function getValue(array $cache, array $filter);
+    abstract protected function getValue(array $cache, array $filter, $shard);
 
-    abstract protected function getItems();
+    abstract protected function getItems($shard);
 
     /**
      * @todo Протестировать скорость чтения на больших объёмах кеша
      */
-    protected function getFromCache($filter = [])
+    protected function getFromCache($filter = [], $shard = 'common')
     {
         $filter = $this->prepareFilter($filter);
 
-        if (is_array($this->itemsCache) && !empty($this->itemsCache))
-        {
-            return $this->getValue($this->itemsCache, $filter);
-        }
-
         $cache = Cache::createInstance();
 
-        if ($cache->initCache($this->getCacheTime(), false, $this->getCacheDir()))
+        if ($cache->initCache($this->getCacheTime(), $shard, $this->getCacheDir()))
         {
-            $this->itemsCache = $cache->getVars();
+            $items = $cache->getVars();
         }
         else
         {
             $cache->startDataCache();
             Application::getInstance()->getTaggedCache()->startTagCache($this->getCacheDir());
 
-            $this->itemsCache = $this->getItems();
+            $items = $this->getItems($shard);
 
-            if (!empty($this->itemsCache))
+            if (!empty($items))
             {
                 Application::getInstance()->getTaggedCache()->endTagCache();
 
-                $cache->endDataCache($this->itemsCache);
+                $cache->endDataCache($items);
             }
             else
             {
@@ -83,6 +77,6 @@ abstract class Finder
             }
         }
 
-        return $this->getValue($this->itemsCache, $filter);
+        return $this->getValue($items, $filter, $shard);
     }
 }

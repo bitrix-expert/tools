@@ -17,8 +17,6 @@ use Bex\Tools\BexTools;
  */
 class GroupTools extends BexTools
 {
-    protected static $cacheTag = 'group_tools_cache';
-
     /**
      * Gets Finder for users groups by group code.
      *

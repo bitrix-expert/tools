@@ -92,12 +92,17 @@ class GroupFinder extends Finder
         return $filter;
     }
 
-    protected function getValue(array $cache, array $filter)
+    protected function getValue(array $cache, array $filter, $shard)
     {
         switch ($filter['type'])
         {
             case 'id':
-                $value = (int) $cache['GROUPS'][$this->code];
+                if (isset($this->id))
+                {
+                    return $this->id;
+                }
+
+                $value = (int) $cache['GROUPS_ID'][$this->code];
 
                 if ($value <= 0)
                 {
@@ -106,11 +111,11 @@ class GroupFinder extends Finder
                 break;
 
             case 'code':
-                $value = $cache['CODES'][$this->id];
+                $value = $cache['GROUPS_CODE'][$this->id];
 
                 if (strlen($value) <= 0)
                 {
-                    throw new ArgumentException('Group code by ID "' . $this->id . '" not found');
+                    throw new ArgumentException('Group code by ID #' . $this->id . ' not found');
                 }
                 break;
 
@@ -122,7 +127,7 @@ class GroupFinder extends Finder
         return $value;
     }
 
-    protected function getItems()
+    protected function getItems($shard)
     {
         $items = [];
 
@@ -132,8 +137,8 @@ class GroupFinder extends Finder
         {
             if ($group['STRING_ID'])
             {
-                $items['GROUPS'][$group['STRING_ID']] = $group['ID'];
-                $items['CODES'][$group['ID']] = $group['STRING_ID'];
+                $items['GROUPS_ID'][$group['STRING_ID']] = $group['ID'];
+                $items['GROUPS_CODE'][$group['ID']] = $group['STRING_ID'];
             }
         }
 
