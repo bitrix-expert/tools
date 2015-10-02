@@ -13,29 +13,56 @@ use Bitrix\Main\Data\Cache;
 
 abstract class Finder
 {
-    protected static $cacheTime;
+    protected static $cacheTime = 8600000;
     protected static $cacheDir;
 
+    /**
+     * Prepare filter.
+     *
+     * @param array $filter The array filter, which is passed through the Finder constructor
+     *
+     * @return array
+     */
     protected function prepareFilter(array $filter)
     {
         return $filter;
     }
 
+    /**
+     * Sets cache time for Finder.
+     *
+     * @param integer $time Seconds
+     */
     public function setCacheTime($time)
     {
         static::$cacheTime = intval($time);
     }
 
+    /**
+     * Gets cache time.
+     *
+     * @return int
+     */
     public function getCacheTime()
     {
         return static::$cacheTime;
     }
 
+    /**
+     * Gets cache directory.
+     *
+     * @return string
+     */
     public function getCacheDir()
     {
         return static::$cacheDir;
     }
 
+    /**
+     * Sets cache directory.
+     *
+     * @param string $directory
+     */
     public function setCacheDir($directory)
     {
         static::$cacheDir = trim(htmlspecialchars($directory));

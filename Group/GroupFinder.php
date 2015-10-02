@@ -18,7 +18,6 @@ use Bitrix\Main\GroupTable;
  */
 class GroupFinder extends Finder
 {
-    protected static $cacheTime = 8600000;
     protected static $cacheDir = 'bex_tools/groups';
     protected static $cacheTag = 'bex_user_groups';
     protected $id;
@@ -65,6 +64,10 @@ class GroupFinder extends Finder
         ]);
     }
 
+    /**
+     * @inheritdoc
+     * @throws ArgumentNullException
+     */
     protected function prepareFilter(array $filter)
     {
         foreach ($filter as $code => &$value)
@@ -131,9 +134,14 @@ class GroupFinder extends Finder
     {
         $items = [];
 
-        $rsGroups = GroupTable::getList();
+        $rsGroups = GroupTable::getList([
+            'select' => [
+                'ID',
+                'STRING_ID'
+            ]
+        ]);
 
-        while ($group = $rsGroups->Fetch())
+        while ($group = $rsGroups->fetch())
         {
             if ($group['STRING_ID'])
             {

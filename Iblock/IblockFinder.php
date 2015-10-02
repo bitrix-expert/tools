@@ -9,6 +9,7 @@ namespace Bex\Tools\Iblock;
 
 use Bex\Tools\Finder;
 use Bitrix\Iblock\IblockTable;
+use Bitrix\Iblock\PropertyEnumerationTable;
 use Bitrix\Iblock\PropertyTable;
 use Bitrix\Main\Application;
 use Bitrix\Main\ArgumentException;
@@ -21,9 +22,11 @@ use Bitrix\Main\LoaderException;
  */
 class IblockFinder extends Finder
 {
+    /**
+     * Code of the shard cache for properties.
+     */
     const CACHE_PROPS_SHARD = 'props';
 
-    protected static $cacheTime = 8600000;
     protected static $cacheDir = 'bex_tools/iblocks';
     protected $id;
     protected $type;
@@ -142,6 +145,10 @@ class IblockFinder extends Finder
         );
     }
 
+    /**
+     * @inheritdoc
+     * @throws ArgumentNullException
+     */
     protected function prepareFilter(array $filter)
     {
         foreach ($filter as $code => &$value)
@@ -254,12 +261,24 @@ class IblockFinder extends Finder
         return $this->getIblocks();
     }
 
+    /**
+     * Gets iblocks ID and codes.
+     *
+     * @return array
+     * @throws ArgumentException
+     */
     protected function getIblocks()
     {
         $items = [];
         $iblockIds = [];
 
-        $rsIblocks = IblockTable::getList();
+        $rsIblocks = IblockTable::getList([
+            'select' => [
+                'IBLOCK_TYPE_ID',
+                'ID',
+                'CODE'
+            ]
+        ]);
 
         while ($iblock = $rsIblocks->fetch())
         {
@@ -284,21 +303,39 @@ class IblockFinder extends Finder
         return $items;
     }
 
+    /**
+     * Gets properties ID.
+     *
+     * @return array
+     * @throws ArgumentException
+     */
     protected function getProperties()
     {
         $items = [];
 
-        $rsProps = PropertyTable::getList();
+        $rsProps = PropertyTable::getList([
+            'select' => [
+                'ID',
+                'CODE',
+                'IBLOCK_ID'
+            ]
+        ]);
 
         while ($prop = $rsProps->fetch())
         {
             $items['PROPS_ID'][$prop['IBLOCK_ID']][$prop['CODE']] = $prop['ID'];
         }
 
-        // @todo Переделать на Д7
-        $rsPropsEnum = \CIBlockPropertyEnum::GetList();
+        $rsPropsEnum = PropertyEnumerationTable::getList([
+            'select' => [
+                'ID',
+                'XML_ID',
+                'PROPERTY_ID',
+                'PROPERTY_CODE' => 'PROPERTY.CODE'
+            ]
+        ]);
 
-        while ($propEnum = $rsPropsEnum->Fetch())
+        while ($propEnum = $rsPropsEnum->fetch())
         {
             if ($propEnum['PROPERTY_CODE'])
             {
