@@ -15,6 +15,15 @@ use Bex\Tools\BexTools;
  */
 class GroupTools extends BexTools
 {
+    protected static $cacheTag = 'group_tools_cache';
+
+    /**
+     * Gets Finder for users groups by group code.
+     *
+     * @param string $code Group code
+     *
+     * @return GroupFinder
+     */
     public static function find($code)
     {
         return new GroupFinder([
@@ -22,6 +31,13 @@ class GroupTools extends BexTools
         ]);
     }
 
+    /**
+     * Gets Finder for users groups by group ID.
+     *
+     * @param integer $id Group ID
+     *
+     * @return GroupFinder
+     */
     public static function findById($id)
     {
         return new GroupFinder([

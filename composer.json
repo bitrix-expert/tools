@@ -1,7 +1,7 @@
 {
   "name": "bitrix-expert/tools",
   "description": "Helpers for developers on Bitrix",
-  "keywords": ["bitrix", "tools"],
+  "keywords": ["bitrix", "iblock", "tools"],
   "type": "library",
   "license": "MIT",
   "support": {

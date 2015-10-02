@@ -19,18 +19,33 @@ use Bex\Tools\BexTools;
  */
 class IblockTools extends BexTools
 {
+    /**
+     * Gets Finder for iblock by iblock type and code.
+     *
+     * @param string $type Iblock type
+     * @param string $code Iblock code
+     *
+     * @return IblockFinder
+     */
     public static function find($type, $code)
     {
         return new IblockFinder([
-            'iblockType' => $type,
-            'iblockCode' => $code,
+            'type' => $type,
+            'code' => $code,
         ]);
     }
 
+    /**
+     * Gets Finder for iblock by iblock ID.
+     *
+     * @param integer $id Iblock ID
+     *
+     * @return IblockFinder
+     */
     public static function findById($id)
     {
         return new IblockFinder([
-            'iblockId' => $id
+            'id' => $id
         ]);
     }
 }
