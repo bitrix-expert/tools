@@ -11,6 +11,8 @@ use Bitrix\Main;
 use Bex\Tools\BexTools;
 
 /**
+ * Tools for working with users groups.
+ *
  * @author Nik Samokhvalov <nik@samokhvalov.info>
  */
 class GroupTools extends BexTools
@@ -43,5 +45,15 @@ class GroupTools extends BexTools
         return new GroupFinder([
             'id' => $id
         ]);
+    }
+
+    public static function onBeforeGroupAdd(&$fields)
+    {
+        // @todo Запрещать создавать группы с одинаковыми символьными кодами
+    }
+
+    public static function onBeforeGroupUpdate($id, &$fields)
+    {
+        // @todo Запрещать обновлять группы с одинаковыми символьными кодами
     }
 }
