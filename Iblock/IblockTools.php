@@ -8,7 +8,6 @@
 namespace Bex\Tools\Iblock;
 
 use Bitrix\Main;
-use Bex\Tools\BexTools;
 
 /**
  * Tools for working with infoblocks.

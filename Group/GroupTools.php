@@ -8,7 +8,6 @@
 namespace Bex\Tools\Group;
 
 use Bitrix\Main;
-use Bex\Tools\BexTools;
 
 /**
  * Tools for working with users groups.
