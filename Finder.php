@@ -16,7 +16,7 @@ use Bitrix\Main\Data\Cache;
  * up repeated queries.
  *
  * Finder uses the term "shard of the cache". The shards are used to separate the large volume cache for the logical 
- * part. Each shard of the cache is stored in a separate file. By default used shard "common".
+ * part. Each shard of the cache is stored separately. By default used shard "common".
  *
  * The basic Finder methods:
  * * `getItems()` — returns all data from the database for the requested shard cache.
