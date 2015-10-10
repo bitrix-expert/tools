@@ -185,6 +185,9 @@ class IblockFinder extends Finder
         return $filter;
     }
 
+    /**
+     * @inheritdoc
+     */
     protected function getValue(array $cache, array $filter, $shard)
     {
         switch ($filter['type'])
@@ -260,6 +263,9 @@ class IblockFinder extends Finder
         }
     }
 
+    /**
+     * @inheritdoc
+     */
     protected function getItems($shard)
     {
         if ($shard === static::CACHE_PROPS_SHARD)

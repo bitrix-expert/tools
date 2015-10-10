@@ -57,6 +57,11 @@ class GroupFinder extends Finder
         }
     }
 
+    /**
+     * Gets group ID.
+     * 
+     * @return integer
+     */
     public function id()
     {
         return $this->getFromCache([
@@ -64,6 +69,11 @@ class GroupFinder extends Finder
         ]);
     }
 
+    /**
+     * Gets group code.
+     * 
+     * @return string
+     */
     public function code()
     {
         return $this->getFromCache([
@@ -73,6 +83,7 @@ class GroupFinder extends Finder
 
     /**
      * @inheritdoc
+     * 
      * @throws ArgumentNullException
      */
     protected function prepareFilter(array $filter)
@@ -102,6 +113,9 @@ class GroupFinder extends Finder
         return $filter;
     }
 
+    /**
+     * @inheritdoc
+     */
     protected function getValue(array $cache, array $filter, $shard)
     {
         switch ($filter['type'])
@@ -137,6 +151,9 @@ class GroupFinder extends Finder
         return $value;
     }
 
+    /**
+     * @inheritdoc
+     */
     protected function getItems($shard)
     {
         $items = [];
@@ -159,20 +176,30 @@ class GroupFinder extends Finder
 
         if (!empty($items))
         {
-            Application::getInstance()->getTaggedCache()->registerTag($this->getCacheTag());
+            Application::getInstance()->getTaggedCache()->registerTag(static::getCacheTag());
         }
 
         return $items;
     }
 
-    public function getCacheTag()
+    /**
+     * Gets tag of cache.
+     * 
+     * @return string
+     */
+    public static function getCacheTag()
     {
         return static::$cacheTag;
     }
 
-    public function setCacheTag($tag)
+    /**
+     * Sets tag for cache.
+     * 
+     * @param string $tag
+     */
+    public static function setCacheTag($tag)
     {
-        static::$cacheTag = $tag;
+        static::$cacheTag = htmlspecialchars(trim($tag));
     }
 
     /**
@@ -215,7 +242,7 @@ class GroupFinder extends Finder
 
         if (defined('BX_COMP_MANAGED_CACHE'))
         {
-            $CACHE_MANAGER->ClearByTag(static::$cacheTag);
+            $CACHE_MANAGER->ClearByTag(static::getCacheTag());
         }
     }
 }

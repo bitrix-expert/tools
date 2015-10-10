@@ -62,7 +62,7 @@ abstract class Finder
      *
      * @param integer $time Seconds
      */
-    public function setCacheTime($time)
+    public static function setCacheTime($time)
     {
         static::$cacheTime = intval($time);
     }
@@ -72,7 +72,7 @@ abstract class Finder
      *
      * @return int
      */
-    public function getCacheTime()
+    public static function getCacheTime()
     {
         return static::$cacheTime;
     }
@@ -82,7 +82,7 @@ abstract class Finder
      *
      * @return string
      */
-    public function getCacheDir()
+    public static function getCacheDir()
     {
         return static::$cacheDir;
     }
@@ -90,9 +90,9 @@ abstract class Finder
     /**
      * Sets cache directory.
      *
-     * @param string $directory
+     * @param string $directory Directory for cache. Relative to the base directory of the cache storage.
      */
-    public function setCacheDir($directory)
+    public static function setCacheDir($directory)
     {
         static::$cacheDir = trim(htmlspecialchars($directory));
     }
@@ -131,14 +131,14 @@ abstract class Finder
 
         $cache = Cache::createInstance();
 
-        if ($cache->initCache($this->getCacheTime(), $shard, $this->getCacheDir()))
+        if ($cache->initCache(static::getCacheTime(), $shard, static::getCacheDir()))
         {
             $items = $cache->getVars();
         }
         else
         {
             $cache->startDataCache();
-            Application::getInstance()->getTaggedCache()->startTagCache($this->getCacheDir());
+            Application::getInstance()->getTaggedCache()->startTagCache(static::getCacheDir());
 
             $items = $this->getItems($shard);
 
