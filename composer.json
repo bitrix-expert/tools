@@ -6,7 +6,8 @@
   "license": "MIT",
   "support": {
     "issues": "https://github.com/bitrix-expert/tools/issues",
-    "source": "https://github.com/bitrix-expert/tools/"
+    "source": "https://github.com/bitrix-expert/tools/",
+    "wiki": "https://github.com/bitrix-expert/tools/wiki"
   },
   "authors": [
     {
@@ -14,6 +15,9 @@
       "email": "nik@samokhvalov.info"
     }
   ],
+  "require": {
+    "php": ">=5.4.0"
+  },
   "autoload": {
     "psr-4": {"Bex\\Tools\\": ""},
     "files": ["./bootstrap.php"]
