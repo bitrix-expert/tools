@@ -1,5 +1,6 @@
 # Bex\Tools
 
+[![Build Status](https://travis-ci.org/bitrix-expert/tools.svg)](https://travis-ci.org/bitrix-expert/tools)
 [![Latest Stable Version](https://poser.pugx.org/bitrix-expert/tools/v/stable)](https://packagist.org/packages/bitrix-expert/tools) 
 [![Total Downloads](https://poser.pugx.org/bitrix-expert/tools/downloads)](https://packagist.org/packages/bitrix-expert/tools) 
 [![License](https://poser.pugx.org/bitrix-expert/tools/license)](https://packagist.org/packages/bitrix-expert/tools)
