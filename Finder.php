@@ -19,13 +19,13 @@ use Bitrix\Main\Data\Cache;
  * part. Each shard of the cache is stored in a separate file. By default used shard "common".
  *
  * The basic Finder methods:
- * * getItems() — returns all data from the database for the requested shard cache.
- * * getValue() — samples the specific value in accordance by filter.
- * * getFromCache() — returns the data from cache (if possible) or calls a method getItems().
+ * * `getItems()` — returns all data from the database for the requested shard cache.
+ * * `getValue()` — samples the specific value in accordance by filter.
+ * * `getFromCache()` — returns the data from cache (if possible) or calls a method `getItems()`.
  *
  * Any instance Finder you can configure:
- * * setCacheTime() — time life of the cache.
- * * setCacheDir() — directory for cache.
+ * * `setCacheTime()` — time life of the cache.
+ * * `setCacheDir()` — directory for cache.
  * 
  * The logic reset of the cache by tag will be defined in a concrete implementation of Finder.
  * 
