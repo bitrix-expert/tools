@@ -14,6 +14,8 @@ use Bitrix\Main\ArgumentNullException;
 use Bitrix\Main\GroupTable;
 
 /**
+ * Finder of the users groups.
+ * 
  * @author Nik Samokhvalov <nik@samokhvalov.info>
  */
 class GroupFinder extends Finder
@@ -23,6 +25,11 @@ class GroupFinder extends Finder
     protected $id;
     protected $code;
 
+    /**
+     * @inheritdoc
+     *
+     * @throws ArgumentNullException Empty parameters in the filter
+     */
     public function __construct(array $filter)
     {
         $filter = $this->prepareFilter($filter);

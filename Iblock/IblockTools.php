@@ -15,7 +15,7 @@ use Bex\Tools\BexTools;
  *
  * @author Nik Samokhvalov <nik@samokhvalov.info>
  */
-class IblockTools extends BexTools
+class IblockTools
 {
     /**
      * Gets Finder for iblock by iblock type and code.

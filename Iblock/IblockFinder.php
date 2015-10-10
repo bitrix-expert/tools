@@ -18,6 +18,8 @@ use Bitrix\Main\Loader;
 use Bitrix\Main\LoaderException;
 
 /**
+ * Finder of the info blocks and properties of the info blocks.
+ * 
  * @author Nik Samokhvalov <nik@samokhvalov.info>
  */
 class IblockFinder extends Finder
@@ -32,6 +34,12 @@ class IblockFinder extends Finder
     protected $type;
     protected $code;
 
+    /**
+     * @inheritdoc
+     *
+     * @throws ArgumentNullException Empty parameters in the filter
+     * @throws LoaderException Module "iblock" not installed
+     */
     public function __construct(array $filter)
     {
         if (!Loader::includeModule('iblock'))
@@ -147,7 +155,8 @@ class IblockFinder extends Finder
 
     /**
      * @inheritdoc
-     * @throws ArgumentNullException
+     * 
+     * @throws ArgumentNullException Empty parameters in the filter
      */
     protected function prepareFilter(array $filter)
     {

@@ -15,7 +15,7 @@ use Bex\Tools\BexTools;
  *
  * @author Nik Samokhvalov <nik@samokhvalov.info>
  */
-class GroupTools extends BexTools
+class GroupTools
 {
     /**
      * Gets Finder for users groups by group code.
