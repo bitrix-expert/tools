@@ -8,7 +8,35 @@
 Tools for developers on Bitrix CMS:
 
 * IblockTools: finder info blocks and properties by IDs or symbol codes.
+
+```php
+<?php
+use Bex\Tools\IblockTools;
+
+$iblockFinder = IblockTools::find('iblock_type', 'iblock_code');
+
+$iblockId = $iblockFinder->id();
+$propEnumId = $iblockFinder->propEnumId('PROP_CODE', 'VALUE_XML_ID');
+
+// And much more…
+```
+
 * GroupTools: finder users groups by IDs or symbol codes.
+
+```php
+<?php
+use Bex\Tools\GroupTools;
+
+$groupFinder = GroupTools::find('group_code');
+
+$groupId = $groupFinder->id();
+$groupCode = GroupTools::findById(3)->code();
+
+// And that's not all ;-)
+```
+
+* Prevents the creation of infoblocks with the same codes.
+* Prevents the creation of user groups with the same string id.
 
 # Installation
 
