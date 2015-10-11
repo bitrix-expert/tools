@@ -7,7 +7,7 @@
 
 namespace Bex\Tools\Group;
 
-use Bitrix\Main;
+use Bitrix\Main\GroupTable;
 use Bitrix\Main\Localization\Loc;
 
 /**
@@ -74,7 +74,7 @@ class GroupTools
                 throw new \Exception('EMPTY_STRING_ID');
             }
 
-            $rsSimilarGroup = Main\GroupTable::getList([
+            $rsSimilarGroup = GroupTable::getList([
                 'filter' => [
                     'STRING_ID' => $stringId,
                     '!ID' => $groupId

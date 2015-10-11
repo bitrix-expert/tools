@@ -13,5 +13,5 @@ $manager->addEventHandler('main', 'OnBeforeGroupUpdate', ['\Bex\Tools\Group\Grou
 $manager->addEventHandler('main', 'OnAfterGroupAdd', ['\Bex\Tools\Group\GroupFinder', 'onAfterGroupAdd']);
 $manager->addEventHandler('main', 'OnAfterGroupUpdate', ['\Bex\Tools\Group\GroupFinder', 'onAfterGroupUpdate']);
 
-$manager->addEventHandler('main', 'OnBeforeIBlockAdd', ['\Bex\Tools\Iblock\IblockTools', 'onBeforeIBlockAdd']);
-$manager->addEventHandler('main', 'OnBeforeIBlockUpdate', ['\Bex\Tools\Iblock\IblockTools', 'onBeforeIBlockUpdate']);
+$manager->addEventHandler('iblock', 'OnBeforeIBlockAdd', ['\Bex\Tools\Iblock\IblockTools', 'onBeforeIBlockAdd']);
+$manager->addEventHandler('iblock', 'OnBeforeIBlockUpdate', ['\Bex\Tools\Iblock\IblockTools', 'onBeforeIBlockUpdate']);
