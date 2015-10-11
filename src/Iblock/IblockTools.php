@@ -72,7 +72,10 @@ class IblockTools
         global $APPLICATION;
 
         try {
-            if (empty($code))
+            $type = trim($type);
+            $code = trim($code);
+            
+            if (strlen($code) <= 0)
             {
                 throw new \Exception('EMPTY_CODE');
             }

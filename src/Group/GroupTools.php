@@ -69,7 +69,9 @@ class GroupTools
         global $APPLICATION;
 
         try {
-            if (empty($stringId))
+            $stringId = trim($stringId);
+            
+            if (strlen($stringId) <= 0)
             {
                 throw new \Exception('EMPTY_STRING_ID');
             }
