@@ -8,8 +8,8 @@
 namespace Bex\Tools\Group;
 
 use Bex\Tools\Finder;
+use Bex\Tools\ValueNotFoundException;
 use Bitrix\Main\Application;
-use Bitrix\Main\ArgumentException;
 use Bitrix\Main\ArgumentNullException;
 use Bitrix\Main\GroupTable;
 
@@ -30,8 +30,10 @@ class GroupFinder extends Finder
      *
      * @throws ArgumentNullException Empty parameters in the filter
      */
-    public function __construct(array $filter)
+    public function __construct(array $filter, $silenceMode = false)
     {
+        parent::__construct($filter, $silenceMode);
+        
         $filter = $this->prepareFilter($filter);
 
         if (isset($filter['id']))
@@ -64,9 +66,9 @@ class GroupFinder extends Finder
      */
     public function id()
     {
-        return $this->getFromCache([
-            'type' => 'id'
-        ]);
+        return $this->getFromCache(
+            ['type' => 'id']
+        );
     }
 
     /**
@@ -76,9 +78,9 @@ class GroupFinder extends Finder
      */
     public function code()
     {
-        return $this->getFromCache([
-            'type' => 'code'
-        ]);
+        return $this->getFromCache(
+            ['type' => 'code']
+        );
     }
 
     /**
@@ -130,7 +132,7 @@ class GroupFinder extends Finder
 
                 if ($value <= 0)
                 {
-                    throw new ArgumentException('Group ID by group code "' . $this->code . '" not found');
+                    throw new ValueNotFoundException('Group ID', 'group code "' . $this->code . '"');
                 }
                 break;
 
@@ -139,7 +141,7 @@ class GroupFinder extends Finder
 
                 if (strlen($value) <= 0)
                 {
-                    throw new ArgumentException('Group code by ID #' . $this->id . ' not found');
+                    throw new ValueNotFoundException('Group code', 'ID #' . $this->id);
                 }
                 break;
 
@@ -205,7 +207,7 @@ class GroupFinder extends Finder
     /**
      * Handler after user group delete event
      *
-     * @param integer $id Group ID
+     * @param int $id Group ID
      */
     public static function onGroupDelete($id)
     {
@@ -225,7 +227,7 @@ class GroupFinder extends Finder
     /**
      * Handler after user group update event
      *
-     * @param integer $id Group ID
+     * @param int $id Group ID
      * @param array $fields Group fields
      */
     public static function onAfterGroupUpdate($id, &$fields)

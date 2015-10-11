@@ -8,6 +8,7 @@
 namespace Bex\Tools\Iblock;
 
 use Bex\Tools\Finder;
+use Bex\Tools\ValueNotFoundException;
 use Bitrix\Iblock\IblockTable;
 use Bitrix\Iblock\PropertyEnumerationTable;
 use Bitrix\Iblock\PropertyTable;
@@ -40,12 +41,14 @@ class IblockFinder extends Finder
      * @throws ArgumentNullException Empty parameters in the filter
      * @throws LoaderException Module "iblock" not installed
      */
-    public function __construct(array $filter)
+    public function __construct(array $filter, $silenceMode = false)
     {
         if (!Loader::includeModule('iblock'))
         {
             throw new LoaderException('Failed include module "iblock"');
         }
+        
+        parent::__construct($filter, $silenceMode);
 
         $filter = $this->prepareFilter($filter);
 
@@ -88,9 +91,7 @@ class IblockFinder extends Finder
      */
     public function id()
     {
-        return $this->getFromCache([
-            'type' => 'id'
-        ]);
+        return $this->getFromCache(['type' => 'id']);
     }
 
     /**
@@ -100,9 +101,7 @@ class IblockFinder extends Finder
      */
     public function type()
     {
-        return $this->getFromCache([
-            'type' => 'type'
-        ]);
+        return $this->getFromCache(['type' => 'type']);
     }
 
     /**
@@ -112,9 +111,7 @@ class IblockFinder extends Finder
      */
     public function code()
     {
-        return $this->getFromCache([
-            'type' => 'code'
-        ]);
+        return $this->getFromCache(['type' => 'code']);
     }
 
     /**
@@ -126,10 +123,8 @@ class IblockFinder extends Finder
      */
     public function propId($code)
     {
-        return $this->getFromCache([
-                'type' => 'propId',
-                'propCode' => $code,
-            ],
+        return $this->getFromCache(
+            ['type' => 'propId', 'propCode' => $code], 
             static::CACHE_PROPS_SHARD
         );
     }
@@ -138,17 +133,14 @@ class IblockFinder extends Finder
      * Gets property enum value ID.
      *
      * @param string $code Property code
-     * @param integer $valueXmlId Property enum value XML ID
+     * @param int $valueXmlId Property enum value XML ID
      *
      * @return integer
      */
     public function propEnumId($code, $valueXmlId)
     {
-        return $this->getFromCache([
-                'type' => 'propEnumId',
-                'propCode' => $code,
-                'valueXmlId' => $valueXmlId
-            ],
+        return $this->getFromCache(
+            ['type' => 'propEnumId', 'propCode' => $code, 'valueXmlId' => $valueXmlId],
             static::CACHE_PROPS_SHARD
         );
     }
@@ -202,8 +194,8 @@ class IblockFinder extends Finder
 
                 if ($value <= 0)
                 {
-                    throw new ArgumentException('Iblock ID by type "' . $this->type . '" and code "'
-                        . $this->code . '" not found');
+                    throw new ValueNotFoundException('Iblock ID', 'type "' . $this->type . '" and code "'
+                        . $this->code . '"');
                 }
 
                 return $value;
@@ -214,7 +206,7 @@ class IblockFinder extends Finder
 
                 if (strlen($value) <= 0)
                 {
-                    throw new ArgumentException('Iblock type by iblock #' . $this->id . ' not found');
+                    throw new ValueNotFoundException('Iblock type', 'iblock #' . $this->id);
                 }
 
                 return $value;
@@ -225,7 +217,7 @@ class IblockFinder extends Finder
 
                 if (strlen($value) <= 0)
                 {
-                    throw new ArgumentException('Iblock code by iblock #' . $this->id . ' not found');
+                    throw new ValueNotFoundException('Iblock code', 'iblock #' . $this->id);
                 }
 
                 return $value;
@@ -236,8 +228,8 @@ class IblockFinder extends Finder
 
                 if ($value <= 0)
                 {
-                    throw new ArgumentException('Property ID by iblock #' . $this->id . ' and property code "'
-                        . $filter['propCode'] . '" not found');
+                    throw new ValueNotFoundException('Property ID', 'iblock #' . $this->id . ' and property code "'
+                        . $filter['propCode'] . '"');
                 }
 
                 return $value;
@@ -250,8 +242,8 @@ class IblockFinder extends Finder
 
                 if ($value <= 0)
                 {
-                    throw new ArgumentException('Property enum ID by iblock #' . $this->id . ', property code "'
-                        . $filter['propCode'] . '" and property XML ID "' . $filter['valueXmlId'] . '" not found');
+                    throw new ValueNotFoundException('Property enum ID', 'iblock #' . $this->id . ', property code "'
+                        . $filter['propCode'] . '" and property XML ID "' . $filter['valueXmlId'] . '"');
                 }
 
                 return $value;

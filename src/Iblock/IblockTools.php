@@ -22,29 +22,34 @@ class IblockTools
      *
      * @param string $type Iblock type
      * @param string $code Iblock code
+     * @param bool $silenceMode When you use silence mode instead of an exception \Bex\Tools\ValueNotFoundException 
+     * (if value was be not found) is returned null.
      *
      * @return IblockFinder
      */
-    public static function find($type, $code)
+    public static function find($type, $code, $silenceMode = false)
     {
-        return new IblockFinder([
-            'type' => $type,
-            'code' => $code,
-        ]);
+        return new IblockFinder(
+            ['type' => $type, 'code' => $code], 
+            $silenceMode
+        );
     }
 
     /**
      * Gets Finder for iblock by iblock ID.
      *
-     * @param integer $id Iblock ID
+     * @param int $id Iblock ID
+     * @param bool $silenceMode When you use silence mode instead of an exception \Bex\Tools\ValueNotFoundException 
+     * (if value was be not found) is returned null.
      *
      * @return IblockFinder
      */
-    public static function findById($id)
+    public static function findById($id, $silenceMode = false)
     {
-        return new IblockFinder([
-            'id' => $id
-        ]);
+        return new IblockFinder(
+            ['id' => $id], 
+            $silenceMode
+        );
     }
 
     public static function onBeforeIBlockAdd(&$fields)

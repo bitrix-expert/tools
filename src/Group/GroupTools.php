@@ -21,28 +21,34 @@ class GroupTools
      * Gets Finder for users groups by group code.
      *
      * @param string $code Group code
+     * @param bool $silenceMode When you use silence mode instead of an exception \Bex\Tools\ValueNotFoundException 
+     * (if value was be not found) is returned null.
      *
      * @return GroupFinder
      */
-    public static function find($code)
+    public static function find($code, $silenceMode = false)
     {
-        return new GroupFinder([
-            'code' => $code,
-        ]);
+        return new GroupFinder(
+            ['code' => $code], 
+            $silenceMode
+        );
     }
 
     /**
      * Gets Finder for users groups by group ID.
      *
-     * @param integer $id Group ID
+     * @param int $id Group ID
+     * @param bool $silenceMode When you use silence mode instead of an exception \Bex\Tools\ValueNotFoundException 
+     * (if value was be not found) is returned null.
      *
      * @return GroupFinder
      */
-    public static function findById($id)
+    public static function findById($id, $silenceMode = false)
     {
-        return new GroupFinder([
-            'id' => $id
-        ]);
+        return new GroupFinder(
+            ['id' => $id], 
+            $silenceMode
+        );
     }
 
     public static function onBeforeGroupAdd(&$fields)
@@ -60,7 +66,7 @@ class GroupTools
      * will be throw Bitrix exception.
      * 
      * @param string $stringId
-     * @param integer $groupId Group ID by string ID
+     * @param int $groupId Group ID by string ID
      *
      * @return bool
      */

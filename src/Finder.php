@@ -35,15 +35,21 @@ abstract class Finder
 {
     protected static $cacheTime = 8600000;
     protected static $cacheDir;
+    protected $silenceMode;
 
     /**
      * Constructor with filter parameters for Finder.
      * 
      * Should not be called directly! Use *Tools classes (IblockTools, GroupTools, etc.)
      * 
-     * @param array $filter
+     * @param array $filter Filter paramters.
+     * @param bool $silenceMode When you use silence mode instead of an exception \Bex\Tools\ValueNotFoundException 
+     * (if value was be not found) is returned null.
      */
-    abstract public function __construct(array $filter);
+    public function __construct(array $filter, $silenceMode = false)
+    {
+        $this->silenceMode = (bool) $silenceMode;
+    }
 
     /**
      * Prepare parameters of the filter from API request.
@@ -60,7 +66,7 @@ abstract class Finder
     /**
      * Sets cache time for Finder.
      *
-     * @param integer $time Seconds
+     * @param int $time Seconds
      */
     public static function setCacheTime($time)
     {
@@ -124,6 +130,9 @@ abstract class Finder
      * @param string $shard Shard of the cache.
      *
      * @return mixed
+     * 
+     * @throws ValueNotFoundException Value was not found.
+     * @throws \InvalidArgumentException Invalid type on filter.
      */
     protected function getFromCache($filter = [], $shard = 'common')
     {
@@ -154,6 +163,17 @@ abstract class Finder
             }
         }
 
-        return $this->getValue($items, $filter, $shard);
+        try {
+            return $this->getValue($items, $filter, $shard);
+        } catch (ValueNotFoundException $e) {
+            if ($this->silenceMode)
+            {
+                return null;
+            }
+            else
+            {
+                throw $e;
+            }
+        }
     }
 }
