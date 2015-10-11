@@ -19,7 +19,7 @@
     "php": ">=5.4.0"
   },
   "autoload": {
-    "psr-4": {"Bex\\Tools\\": ""},
-    "files": ["./bootstrap.php"]
+    "psr-4": {"Bex\\Tools\\": "src/"},
+    "files": ["src/bootstrap.php"]
   }
 }
