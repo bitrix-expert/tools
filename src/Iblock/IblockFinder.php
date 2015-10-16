@@ -29,6 +29,8 @@ class IblockFinder extends Finder
      * Code of the shard cache for properties.
      */
     const CACHE_PROPS_SHARD = 'props';
+    
+    const CACHE_LITE = 'lite';
 
     protected static $cacheDir = 'bex_tools/iblocks';
     protected $id;
@@ -78,9 +80,10 @@ class IblockFinder extends Finder
                 throw new ArgumentNullException('code');
             }
 
-            $this->id = $this->getFromCache([
-                'type' => 'id'
-            ]);
+            $this->id = $this->getFromCache(
+                ['type' => 'id'],
+                static::CACHE_LITE
+            );
         }
     }
 
@@ -91,7 +94,10 @@ class IblockFinder extends Finder
      */
     public function id()
     {
-        return $this->getFromCache(['type' => 'id']);
+        return $this->getFromCache(
+            ['type' => 'id'],
+            $this->id
+        );
     }
 
     /**
@@ -101,7 +107,10 @@ class IblockFinder extends Finder
      */
     public function type()
     {
-        return $this->getFromCache(['type' => 'type']);
+        return $this->getFromCache(
+            ['type' => 'type'],
+            $this->id
+        );
     }
 
     /**
@@ -111,7 +120,10 @@ class IblockFinder extends Finder
      */
     public function code()
     {
-        return $this->getFromCache(['type' => 'code']);
+        return $this->getFromCache(
+            ['type' => 'code'],
+            $this->id
+        );
     }
 
     /**
@@ -236,9 +248,7 @@ class IblockFinder extends Finder
                 break;
 
             case 'propEnumId':
-                $propId = $cache['PROPS_ID'][$this->id][$filter['propCode']];
-
-                $value = (int) $cache['PROPS_ENUM_ID'][$propId][$filter['valueXmlId']];
+                $value = (int) $cache['PROPS_ENUM_ID'][$filter['code']][$filter['valueXmlId']];
 
                 if ($value <= 0)
                 {
@@ -260,21 +270,17 @@ class IblockFinder extends Finder
      */
     protected function getItems($shard)
     {
-        if ($shard === static::CACHE_PROPS_SHARD)
+        if ($shard === static::CACHE_LITE)
         {
-            return $this->getProperties();
+            return $this->getLiteShard();
         }
-
-        return $this->getIblocks();
+        else
+        {
+            return $this->getIblockShard();
+        }
     }
-
-    /**
-     * Gets iblocks ID and codes.
-     *
-     * @return array
-     * @throws ArgumentException
-     */
-    protected function getIblocks()
+    
+    protected function getLiteShard()
     {
         $items = [];
         $iblockIds = [];
@@ -291,36 +297,55 @@ class IblockFinder extends Finder
         {
             if ($iblock['CODE'])
             {
-                $items['IBLOCKS_ID'][$iblock['IBLOCK_TYPE_ID']][$iblock['CODE']] = $iblock['ID'];
-                $items['IBLOCKS_CODE'][$iblock['ID']] = $iblock['CODE'];
+                $items[$iblock['ID']] = [
+                    'TYPE' => $iblock['ID'],
+                    'CODE' => $iblock['CODE']
+                ];
 
                 $iblockIds[] = $iblock['ID'];
             }
-
-            $items['IBLOCKS_TYPE'][$iblock['ID']] = $iblock['IBLOCK_TYPE_ID'];
         }
 
-        foreach ($iblockIds as $id)
+        if (!empty($iblockIds))
         {
-            Application::getInstance()->getTaggedCache()->registerTag('iblock_id_' . $id);
+            $this->registerCacheTags($iblockIds);
         }
-
-        Application::getInstance()->getTaggedCache()->registerTag('iblock_id_new');
-
+        
         return $items;
     }
-
-    /**
-     * Gets properties ID.
-     *
-     * @return array
-     * @throws ArgumentException
-     */
-    protected function getProperties()
+    
+    protected function getIblockShard()
     {
         $items = [];
 
+        $rsIblocks = IblockTable::getList([
+            'filter' => [
+                'ID' => $this->id
+            ],
+            'select' => [
+                'IBLOCK_TYPE_ID',
+                'CODE'
+            ]
+        ]);
+
+        if ($iblock = $rsIblocks->fetch())
+        {
+            if ($iblock['CODE'])
+            {
+                $items['IBLOCK_CODE'] = $iblock['CODE'];
+            }
+
+            $items['IBLOCK_TYPE'] = $iblock['IBLOCK_TYPE_ID'];
+        }
+        else
+        {
+            // todo
+        }
+
         $rsProps = PropertyTable::getList([
+            'filter' => [
+                'IBLOCK_ID' => $this->id
+            ],
             'select' => [
                 'ID',
                 'CODE',
@@ -330,10 +355,13 @@ class IblockFinder extends Finder
 
         while ($prop = $rsProps->fetch())
         {
-            $items['PROPS_ID'][$prop['IBLOCK_ID']][$prop['CODE']] = $prop['ID'];
+            $items['PROPS_ID'][$prop['CODE']] = $prop['ID'];
         }
 
         $rsPropsEnum = PropertyEnumerationTable::getList([
+            'filter' => [
+                'PROPERTY_ID' => $this->id
+            ],
             'select' => [
                 'ID',
                 'XML_ID',
@@ -346,10 +374,25 @@ class IblockFinder extends Finder
         {
             if ($propEnum['PROPERTY_CODE'])
             {
-                $items['PROPS_ENUM_ID'][$propEnum['PROPERTY_ID']][$propEnum['XML_ID']] = $propEnum['ID'];
+                $items['PROPS_ENUM_ID'][$propEnum['PROPERTY_CODE']][$propEnum['XML_ID']] = $propEnum['ID'];
             }
         }
 
+        if (!empty($items))
+        {
+            $this->registerCacheTags($this->id);
+        }
+
         return $items;
+    }
+
+    protected function registerCacheTags($iblockIds)
+    {
+        foreach ($iblockIds as $id)
+        {
+            Application::getInstance()->getTaggedCache()->registerTag('iblock_id_' . $id);
+        }
+
+        Application::getInstance()->getTaggedCache()->registerTag('iblock_id_new');
     }
 }
