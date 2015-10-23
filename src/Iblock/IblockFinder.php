@@ -219,7 +219,7 @@ class IblockFinder extends Finder
             switch ($filter['type'])
             {
                 case 'type':
-                    $value = (string) $cache['IBLOCKS_TYPE'][$this->id];
+                    $value = (string) $cache['TYPE'];
 
                     if (strlen($value) <= 0)
                     {
@@ -230,7 +230,7 @@ class IblockFinder extends Finder
                     break;
 
                 case 'code':
-                    $value = (string) $cache['IBLOCKS_CODE'][$this->id];
+                    $value = (string) $cache['CODE'];
 
                     if (strlen($value) <= 0)
                     {
@@ -241,7 +241,7 @@ class IblockFinder extends Finder
                     break;
 
                 case 'propId':
-                    $value = (int) $cache['PROPS_ID'][$this->id][$filter['propCode']];
+                    $value = (int) $cache['PROPS_ID'][$filter['propCode']];
 
                     if ($value <= 0)
                     {
@@ -335,10 +335,10 @@ class IblockFinder extends Finder
         {
             if ($iblock['CODE'])
             {
-                $items['IBLOCK_CODE'] = $iblock['CODE'];
+                $items['CODE'] = $iblock['CODE'];
             }
 
-            $items['IBLOCK_TYPE'] = $iblock['IBLOCK_TYPE_ID'];
+            $items['TYPE'] = $iblock['IBLOCK_TYPE_ID'];
         }
         
         if (empty($items))
@@ -389,6 +389,11 @@ class IblockFinder extends Finder
 
     protected function registerCacheTags($iblockIds)
     {
+        if (!is_array($iblockIds) || empty($iblockIds))
+        {
+            return;
+        }
+        
         foreach ($iblockIds as $id)
         {
             Application::getInstance()->getTaggedCache()->registerTag('iblock_id_' . $id);
