@@ -13,6 +13,7 @@ use Bitrix\Iblock\IblockTable;
 use Bitrix\Iblock\PropertyEnumerationTable;
 use Bitrix\Iblock\PropertyTable;
 use Bitrix\Main\Application;
+use Bitrix\Main\ArgumentException;
 use Bitrix\Main\ArgumentNullException;
 use Bitrix\Main\Loader;
 use Bitrix\Main\LoaderException;
@@ -70,8 +71,7 @@ class IblockFinder extends Finder
         {
             $this->id = $filter['id'];
         }
-
-        if (!isset($this->id))
+        else
         {
             $this->id = $this->getFromCache(
                 ['type' => 'id'],
@@ -181,93 +181,127 @@ class IblockFinder extends Finder
 
     /**
      * @inheritdoc
+     *
+     * @throws ArgumentNullException
+     * @throws ValueNotFoundException
      */
     protected function getValue(array $cache, array $filter, $shard)
     {
         if ($shard === static::CACHE_SHARD_LITE)
         {
-            if (!isset($this->type))
-            {
-                throw new ArgumentNullException('type');
-            }
-            elseif (!isset($this->code))
-            {
-                throw new ArgumentNullException('code');
-            }
-
-            switch ($filter['type'])
-            {
-                case 'id':
-                    $value = (int) $cache[$this->type][$this->code];
-
-                    if ($value <= 0)
-                    {
-                        throw new ValueNotFoundException('Iblock ID', 'type "' . $this->type . '" and code "'
-                            . $this->code . '"');
-                    }
-
-                    return $value;
-                    break;
-
-                default:
-                    throw new \InvalidArgumentException('Invalid type on filter');
-                    break;
-            }
+            return $this->getValueLiteShard($cache, $filter);
         }
         else
         {
-            switch ($filter['type'])
-            {
-                case 'type':
-                    $value = (string) $cache['TYPE'];
+            return $this->getValueIblockShard($cache, $filter);
+        }
+    }
 
-                    if (strlen($value) <= 0)
-                    {
-                        throw new ValueNotFoundException('Iblock type', 'iblock #' . $this->id);
-                    }
+    /**
+     * @see IblockFinder::getValue()
+     * 
+     * @param array $cache
+     * @param array $filter
+     *
+     * @return int
+     * 
+     * @throws ArgumentNullException
+     * @throws ValueNotFoundException
+     */
+    protected function getValueLiteShard(array $cache, array $filter)
+    {
+        if (!isset($this->type))
+        {
+            throw new ArgumentNullException('type');
+        }
+        elseif (!isset($this->code))
+        {
+            throw new ArgumentNullException('code');
+        }
 
-                    return $value;
-                    break;
+        switch ($filter['type'])
+        {
+            case 'id':
+                $value = (int) $cache[$this->type][$this->code];
 
-                case 'code':
-                    $value = (string) $cache['CODE'];
+                if ($value <= 0)
+                {
+                    throw new ValueNotFoundException('Iblock ID', 'type "' . $this->type . '" and code "'
+                        . $this->code . '"');
+                }
 
-                    if (strlen($value) <= 0)
-                    {
-                        throw new ValueNotFoundException('Iblock code', 'iblock #' . $this->id);
-                    }
+                return $value;
+                break;
 
-                    return $value;
-                    break;
+            default:
+                throw new \InvalidArgumentException('Invalid type on filter');
+                break;
+        }
+    }
 
-                case 'propId':
-                    $value = (int) $cache['PROPS_ID'][$filter['propCode']];
+    /**
+     * @see IblockFinder::getValue()
+     * 
+     * @param array $cache
+     * @param array $filter
+     *
+     * @return int|string
+     * 
+     * @throws ValueNotFoundException
+     */
+    protected function getValueIblockShard(array $cache, array $filter)
+    {
+        switch ($filter['type'])
+        {
+            case 'type':
+                $value = (string) $cache['TYPE'];
 
-                    if ($value <= 0)
-                    {
-                        throw new ValueNotFoundException('Property ID', 'iblock #' . $this->id . ' and property code "'
-                            . $filter['propCode'] . '"');
-                    }
+                if (strlen($value) <= 0)
+                {
+                    throw new ValueNotFoundException('Iblock type', 'iblock #' . $this->id);
+                }
 
-                    return $value;
-                    break;
+                return $value;
+                break;
 
-                case 'propEnumId':
-                    $value = (int) $cache['PROPS_ENUM_ID'][$filter['code']][$filter['valueXmlId']];
+            case 'code':
+                $value = (string) $cache['CODE'];
 
-                    if ($value <= 0)
-                    {
-                        throw new ValueNotFoundException('Property enum ID', 'iblock #' . $this->id . ', property code "'
-                            . $filter['propCode'] . '" and property XML ID "' . $filter['valueXmlId'] . '"');
-                    }
+                if (strlen($value) <= 0)
+                {
+                    throw new ValueNotFoundException('Iblock code', 'iblock #' . $this->id);
+                }
 
-                    return $value;
-                    break;
+                return $value;
+                break;
 
-                default:
-                    throw new \InvalidArgumentException('Invalid type on filter');
-                    break;
-            }
+            case 'propId':
+                $value = (int) $cache['PROPS_ID'][$filter['propCode']];
+
+                if ($value <= 0)
+                {
+                    throw new ValueNotFoundException('Property ID', 'iblock #' . $this->id . ' and property code "'
+                        . $filter['propCode'] . '"');
+                }
+
+                return $value;
+                break;
+
+            case 'propEnumId':
+                $value = (int) $cache['PROPS_ENUM_ID'][$filter['code']][$filter['valueXmlId']];
+
+                if ($value <= 0)
+                {
+                    throw new ValueNotFoundException('Property enum ID', 'iblock #' . $this->id . ', property code "'
+                        . $filter['propCode'] . '" and property XML ID "' . $filter['valueXmlId'] . '"');
+                }
+
+                return $value;
+                break;
+
+            default:
+                throw new \InvalidArgumentException('Invalid type on filter');
+                break;
         }
     }
 
@@ -285,7 +319,14 @@ class IblockFinder extends Finder
             return $this->getIblockShard();
         }
     }
-    
+
+    /**
+     * @see IblockFinder::getItems()
+     * 
+     * @return array
+     * 
+     * @throws ArgumentException
+     */
     protected function getLiteShard()
     {
         $items = [];
@@ -316,7 +357,15 @@ class IblockFinder extends Finder
         
         return $items;
     }
-    
+
+    /**
+     * @see IblockFinder::getItems()
+     * 
+     * @return array
+     * 
+     * @throws ValueNotFoundException
+     * @throws ArgumentException
+     */
     protected function getIblockShard()
     {
         $items = [];
