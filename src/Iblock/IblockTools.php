@@ -57,9 +57,30 @@ class IblockTools
         return static::validateCode($fields['IBLOCK_TYPE_ID'], $fields['CODE']);
     }
 
+    public static function onAfterIBlockAdd(&$fields)
+    {
+        if ($fields['ID'] > 0)
+        {
+            IblockFinder::runCacheCollector($fields['IBLOCK_TYPE_ID'], $fields['CODE']);
+        }
+    }
+
     public static function onBeforeIBlockUpdate(&$fields)
     {
         return static::validateCode($fields['IBLOCK_TYPE_ID'], $fields['CODE'], $fields['ID']);
+    }
+
+    public static function onAfterIBlockUpdate(&$fields)
+    {
+        if ($fields['RESULT'])
+        {
+            IblockFinder::runCacheCollector($fields['IBLOCK_TYPE_ID'], $fields['CODE']);
+        }
+    }
+    
+    public static function onIBlockDelete($id)
+    {
+//        IblockFinder::runCacheCollector()
     }
 
     /**

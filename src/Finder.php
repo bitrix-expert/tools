@@ -170,10 +170,13 @@ abstract class Finder
             {
                 return null;
             }
-            else
-            {
-                throw $e;
-            }
+            
+            throw $e;
         }
+    }
+
+    protected function registerCacheTags($tag)
+    {
+        Application::getInstance()->getTaggedCache()->registerTag($tag);
     }
 }

@@ -30,7 +30,6 @@ class IblockFinder extends Finder
      */
     const CACHE_SHARD_LITE = 'lite';
     /**
-     * Code of the shard cache for properties.
      * @deprecated Not used.
      */
     const CACHE_PROPS_SHARD = 'props';
@@ -148,6 +147,18 @@ class IblockFinder extends Finder
     }
 
     /**
+     * Preliminary collection of cache.
+     * 
+     * @param string $iblockType Type of info block.
+     * @param string $iblockCode Code of info block.
+     */
+    public static function runCacheCollector($iblockType, $iblockCode)
+    {
+        $finder = new static(['type' => $iblockType, 'code' => $iblockCode]);
+        $finder->code();
+    }
+
+    /**
      * @inheritdoc
      * 
      * @throws ArgumentNullException Empty parameters in the filter
@@ -219,23 +230,21 @@ class IblockFinder extends Finder
             throw new ArgumentNullException('code');
         }
 
-        switch ($filter['type'])
+        if ($filter['type'] === 'id')
         {
-            case 'id':
-                $value = (int) $cache[$this->type][$this->code];
+            $value = (int) $cache[$this->type][$this->code];
 
-                if ($value <= 0)
-                {
-                    throw new ValueNotFoundException('Iblock ID', 'type "' . $this->type . '" and code "'
-                        . $this->code . '"');
-                }
+            if ($value <= 0)
+            {
+                throw new ValueNotFoundException('Iblock ID', 'type "' . $this->type . '" and code "' 
+                    . $this->code . '"');
+            }
 
-                return $value;
-                break;
-
-            default:
-                throw new \InvalidArgumentException('Invalid type on filter');
-                break;
+            return $value;
+        }
+        else
+        {
+            throw new \InvalidArgumentException('Invalid type on filter');
         }
     }
 
@@ -288,8 +297,8 @@ class IblockFinder extends Finder
                 break;
 
             case 'propEnumId':
-                $value = (int) $cache['PROPS_ENUM_ID'][$filter['code']][$filter['valueXmlId']];
-
+                $value = (int) $cache['PROPS_ENUM_ID'][$filter['propCode']][$filter['valueXmlId']];
+                
                 if ($value <= 0)
                 {
                     throw new ValueNotFoundException('Property enum ID', 'iblock #' . $this->id . ', property code "'
@@ -312,11 +321,11 @@ class IblockFinder extends Finder
     {
         if ($shard === static::CACHE_SHARD_LITE)
         {
-            return $this->getLiteShard();
+            return $this->getItemsLiteShard();
         }
         else
         {
-            return $this->getIblockShard();
+            return $this->getItemsIblockShard();
         }
     }
 
@@ -327,10 +336,9 @@ class IblockFinder extends Finder
      * 
      * @throws ArgumentException
      */
-    protected function getLiteShard()
+    protected function getItemsLiteShard()
     {
         $items = [];
-        $iblockIds = [];
 
         $rsIblocks = IblockTable::getList([
             'select' => [
@@ -346,14 +354,11 @@ class IblockFinder extends Finder
             {
                 $items[$iblock['IBLOCK_TYPE_ID']][$iblock['CODE']] = $iblock['ID'];
 
-                $iblockIds[] = $iblock['ID'];
+                $this->registerCacheTags('iblock_id_' . $iblock['ID']);
             }
         }
 
-        if (!empty($iblockIds))
-        {
-            $this->registerCacheTags($iblockIds);
-        }
+        $this->registerCacheTags('iblock_id_new');
         
         return $items;
     }
@@ -366,7 +371,7 @@ class IblockFinder extends Finder
      * @throws ValueNotFoundException
      * @throws ArgumentException
      */
-    protected function getIblockShard()
+    protected function getItemsIblockShard()
     {
         $items = [];
 
@@ -395,6 +400,8 @@ class IblockFinder extends Finder
             throw new ValueNotFoundException('Iblock', 'ID #' . $this->id);
         }
 
+        $propIds = [];
+
         $rsProps = PropertyTable::getList([
             'filter' => [
                 'IBLOCK_ID' => $this->id
@@ -408,46 +415,35 @@ class IblockFinder extends Finder
 
         while ($prop = $rsProps->fetch())
         {
+            $propIds[] = $prop['ID'];
             $items['PROPS_ID'][$prop['CODE']] = $prop['ID'];
         }
 
-        $rsPropsEnum = PropertyEnumerationTable::getList([
-            'filter' => [
-                'PROPERTY_ID' => $this->id
-            ],
-            'select' => [
-                'ID',
-                'XML_ID',
-                'PROPERTY_ID',
-                'PROPERTY_CODE' => 'PROPERTY.CODE'
-            ]
-        ]);
-
-        while ($propEnum = $rsPropsEnum->fetch())
+        if (!empty($propIds))
         {
-            if ($propEnum['PROPERTY_CODE'])
+            $rsPropsEnum = PropertyEnumerationTable::getList([
+                'filter' => [
+                    'PROPERTY_ID' => $propIds
+                ],
+                'select' => [
+                    'ID',
+                    'XML_ID',
+                    'PROPERTY_ID',
+                    'PROPERTY_CODE' => 'PROPERTY.CODE'
+                ]
+            ]);
+
+            while ($propEnum = $rsPropsEnum->fetch())
             {
-                $items['PROPS_ENUM_ID'][$propEnum['PROPERTY_CODE']][$propEnum['XML_ID']] = $propEnum['ID'];
+                if ($propEnum['PROPERTY_CODE'])
+                {
+                    $items['PROPS_ENUM_ID'][$propEnum['PROPERTY_CODE']][$propEnum['XML_ID']] = $propEnum['ID'];
+                }
             }
         }
 
-        $this->registerCacheTags($this->id);
+        $this->registerCacheTags('iblock_id_' . $this->id);
 
         return $items;
-    }
-
-    protected function registerCacheTags($iblockIds)
-    {
-        if (!is_array($iblockIds) || empty($iblockIds))
-        {
-            return;
-        }
-        
-        foreach ($iblockIds as $id)
-        {
-            Application::getInstance()->getTaggedCache()->registerTag('iblock_id_' . $id);
-        }
-
-        Application::getInstance()->getTaggedCache()->registerTag('iblock_id_new');
     }
 }
