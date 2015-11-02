@@ -82,15 +82,10 @@ class GroupTools
                 throw new \Exception('EMPTY_STRING_ID');
             }
 
-            $rsSimilarGroup = GroupTable::getList([
-                'filter' => [
-                    'STRING_ID' => $stringId,
-                    '!ID' => $groupId
-                ],
-                'select' => [
-                    'ID'
-                ]
-            ]);
+            $rsSimilarGroup = GroupTable::query()
+                ->setFilter(['STRING_ID' => $stringId, '!ID' => $groupId])
+                ->setSelect(['ID'])
+                ->exec();
 
             if ($rsSimilarGroup->getSelectedRowsCount() > 0)
             {

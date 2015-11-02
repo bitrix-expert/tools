@@ -351,14 +351,10 @@ class IblockFinder extends Finder
     protected function getItemsLiteShard()
     {
         $items = [];
-
-        $rsIblocks = IblockTable::getList([
-            'select' => [
-                'IBLOCK_TYPE_ID',
-                'ID',
-                'CODE'
-            ]
-        ]);
+        
+        $rsIblocks = IblockTable::query()
+            ->setSelect(['IBLOCK_TYPE_ID', 'ID', 'CODE'])
+            ->exec();
 
         while ($iblock = $rsIblocks->fetch())
         {
@@ -384,16 +380,11 @@ class IblockFinder extends Finder
     protected function getItemsIblockShard()
     {
         $items = [];
-
-        $rsIblocks = IblockTable::getList([
-            'filter' => [
-                'ID' => $this->id
-            ],
-            'select' => [
-                'IBLOCK_TYPE_ID',
-                'CODE'
-            ]
-        ]);
+        
+        $rsIblocks = IblockTable::query()
+            ->setFilter(['ID' => $this->id])
+            ->setSelect(['IBLOCK_TYPE_ID', 'CODE'])
+            ->exec();
 
         if ($iblock = $rsIblocks->fetch())
         {
@@ -411,17 +402,11 @@ class IblockFinder extends Finder
         }
 
         $propIds = [];
-
-        $rsProps = PropertyTable::getList([
-            'filter' => [
-                'IBLOCK_ID' => $this->id
-            ],
-            'select' => [
-                'ID',
-                'CODE',
-                'IBLOCK_ID'
-            ]
-        ]);
+        
+        $rsProps = PropertyTable::query()
+            ->setFilter(['IBLOCK_ID' => $this->id])
+            ->setSelect(['ID', 'CODE', 'IBLOCK_ID'])
+            ->exec();
 
         while ($prop = $rsProps->fetch())
         {
@@ -431,17 +416,10 @@ class IblockFinder extends Finder
 
         if (!empty($propIds))
         {
-            $rsPropsEnum = PropertyEnumerationTable::getList([
-                'filter' => [
-                    'PROPERTY_ID' => $propIds
-                ],
-                'select' => [
-                    'ID',
-                    'XML_ID',
-                    'PROPERTY_ID',
-                    'PROPERTY_CODE' => 'PROPERTY.CODE'
-                ]
-            ]);
+            $rsPropsEnum = PropertyEnumerationTable::query()
+                ->setFilter(['PROPERTY_ID' => $propIds])
+                ->setSelect(['ID', 'XML_ID', 'PROPERTY_ID', 'PROPERTY_CODE' => 'PROPERTY.CODE'])
+                ->exec();
 
             while ($propEnum = $rsPropsEnum->fetch())
             {

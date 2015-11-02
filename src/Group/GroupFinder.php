@@ -159,13 +159,10 @@ class GroupFinder extends Finder
     protected function getItems($shard)
     {
         $items = [];
-
-        $rsGroups = GroupTable::getList([
-            'select' => [
-                'ID',
-                'STRING_ID'
-            ]
-        ]);
+        
+        $rsGroups = GroupTable::query()
+            ->setSelect(['ID', 'STRING_ID'])
+            ->exec();
 
         while ($group = $rsGroups->fetch())
         {
