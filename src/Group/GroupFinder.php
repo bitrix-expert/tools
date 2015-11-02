@@ -211,7 +211,7 @@ class GroupFinder extends Finder
      */
     public static function onGroupDelete($id)
     {
-        static::deleteGroupCache();
+        static::deleteCacheByTag(static::getCacheTag());
     }
 
     /**
@@ -221,7 +221,7 @@ class GroupFinder extends Finder
      */
     public static function onAfterGroupAdd(&$fields)
     {
-        static::deleteGroupCache();
+        static::deleteCacheByTag(static::getCacheTag());
     }
 
     /**
@@ -232,11 +232,12 @@ class GroupFinder extends Finder
      */
     public static function onAfterGroupUpdate($id, &$fields)
     {
-        static::deleteGroupCache();
+        static::deleteCacheByTag(static::getCacheTag());
     }
-
+    
     /**
-     * Clears user group cache by tag
+     * @deprecated
+     * @see Finder::deleteCacheByTag()
      */
     protected static function deleteGroupCache()
     {

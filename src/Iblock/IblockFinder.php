@@ -12,7 +12,6 @@ use Bex\Tools\ValueNotFoundException;
 use Bitrix\Iblock\IblockTable;
 use Bitrix\Iblock\PropertyEnumerationTable;
 use Bitrix\Iblock\PropertyTable;
-use Bitrix\Main\Application;
 use Bitrix\Main\ArgumentException;
 use Bitrix\Main\ArgumentNullException;
 use Bitrix\Main\Loader;
@@ -30,7 +29,7 @@ class IblockFinder extends Finder
      */
     const CACHE_SHARD_LITE = 'lite';
     /**
-     * @deprecated Not used.
+     * @deprecated
      */
     const CACHE_PROPS_SHARD = 'props';
 
@@ -152,8 +151,21 @@ class IblockFinder extends Finder
      * @param string $iblockType Type of info block.
      * @param string $iblockCode Code of info block.
      */
-    public static function runCacheCollector($iblockType, $iblockCode)
+    public static function runCacheCollector($iblockType = null, $iblockCode = null)
     {
+        if (!$iblockType || !$iblockCode)
+        {
+            $iblock = IblockTable::query()
+                ->setFilter(['!CODE' => false])
+                ->setLimit(1)
+                ->setSelect(['IBLOCK_TYPE_ID', 'CODE'])
+                ->exec()
+                ->fetch();
+            
+            $iblockType = $iblock['IBLOCK_TYPE_ID'];
+            $iblockCode = $iblock['CODE'];
+        }
+        
         $finder = new static(['type' => $iblockType, 'code' => $iblockCode]);
         $finder->code();
     }
@@ -353,12 +365,10 @@ class IblockFinder extends Finder
             if ($iblock['CODE'])
             {
                 $items[$iblock['IBLOCK_TYPE_ID']][$iblock['CODE']] = $iblock['ID'];
-
-                $this->registerCacheTags('iblock_id_' . $iblock['ID']);
             }
         }
 
-        $this->registerCacheTags('iblock_id_new');
+        $this->registerCacheTag('bex_iblock_new');
         
         return $items;
     }
@@ -442,8 +452,37 @@ class IblockFinder extends Finder
             }
         }
 
-        $this->registerCacheTags('iblock_id_' . $this->id);
+        $this->registerCacheTag('bex_iblock_' . $this->id);
 
         return $items;
+    }
+
+    public static function onAfterIBlockAdd(&$fields)
+    {
+        if ($fields['ID'] > 0)
+        {
+            static::deleteCacheByTag('bex_iblock_new');
+            
+            static::runCacheCollector($fields['IBLOCK_TYPE_ID'], $fields['CODE']);
+        }
+    }
+
+    public static function onAfterIBlockUpdate(&$fields)
+    {
+        if ($fields['RESULT'])
+        {
+            static::deleteCacheByTag('bex_iblock_' . $fields['ID']);
+            static::deleteCacheByTag('bex_iblock_new');
+            
+            static::runCacheCollector($fields['IBLOCK_TYPE_ID'], $fields['CODE']);
+        }
+    }
+
+    public static function onIBlockDelete($id)
+    {
+        static::deleteCacheByTag('bex_iblock_' . $id);
+        static::deleteCacheByTag('bex_iblock_new');
+        
+        static::runCacheCollector();
     }
 }

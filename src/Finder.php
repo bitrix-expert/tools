@@ -175,8 +175,14 @@ abstract class Finder
         }
     }
 
-    protected function registerCacheTags($tag)
+    protected function registerCacheTag($tag)
     {
         Application::getInstance()->getTaggedCache()->registerTag($tag);
+    }
+
+    protected static function deleteCacheByTag($tag)
+    {
+        $cache = Application::getInstance()->getTaggedCache();
+        $cache->clearByTag($tag);
     }
 }
