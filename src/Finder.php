@@ -175,11 +175,21 @@ abstract class Finder
         }
     }
 
+    /**
+     * Registration of the tag cache.
+     * 
+     * @param string $tag
+     */
     protected function registerCacheTag($tag)
     {
         Application::getInstance()->getTaggedCache()->registerTag($tag);
     }
 
+    /**
+     * Deletes all cache by tag.
+     * 
+     * @param string $tag
+     */
     protected static function deleteCacheByTag($tag)
     {
         $cache = Application::getInstance()->getTaggedCache();

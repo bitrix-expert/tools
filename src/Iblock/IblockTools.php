@@ -85,16 +85,10 @@ class IblockTools
                 throw new \Exception('EMPTY_CODE');
             }
 
-            $rsSimilarIblock = IblockTable::getList([
-                'filter' => [
-                    'IBLOCK_TYPE_ID' => $type,
-                    'CODE' => $code,
-                    '!ID' => $iblockId
-                ],
-                'select' => [
-                    'ID'
-                ]
-            ]);
+            $rsSimilarIblock = IblockTable::query()
+                ->setFilter(['IBLOCK_TYPE_ID' => $type, 'CODE' => $code, '!ID' => $iblockId])
+                ->setSelect(['ID'])
+                ->exec();
 
             if ($rsSimilarIblock->getSelectedRowsCount() > 0)
             {
