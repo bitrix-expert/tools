@@ -1,4 +1,4 @@
-# Changelog
+# Change log
 
 ## 1.3
 
