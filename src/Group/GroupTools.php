@@ -73,6 +73,12 @@ class GroupTools
     protected static function validateStringId($stringId, $groupId = null)
     {
         global $APPLICATION;
+        
+        if (is_null($stringId))
+        {
+            // if code of group is not updated
+            return true;
+        }
 
         try {
             $stringId = trim($stringId);

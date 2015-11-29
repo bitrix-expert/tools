@@ -75,6 +75,12 @@ class IblockTools
     protected static function validateCode($type, $code, $iblockId = null)
     {
         global $APPLICATION;
+        
+        if (is_null($code))
+        {
+            // if code of info block is not updated
+            return true;
+        }
 
         try {
             $type = trim($type);
