@@ -5,6 +5,8 @@
  * @license MIT
  */
 
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
+
 $manager = \Bitrix\Main\EventManager::getInstance();
 
 $manager->addEventHandler('main', 'OnBeforeGroupAdd', ['\Bex\Tools\Group\GroupTools', 'onBeforeGroupAdd']);
