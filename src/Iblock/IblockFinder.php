@@ -451,8 +451,8 @@ class IblockFinder extends Finder
         {
             static::deleteCacheByTag('bex_iblock_' . $fields['ID']);
             static::deleteCacheByTag('bex_iblock_new');
-            
-            static::runCacheCollector($fields['IBLOCK_TYPE_ID'], $fields['CODE']);
+
+            //static::runCacheCollector($fields['IBLOCK_TYPE_ID'], $fields['CODE']);
         }
     }
 
