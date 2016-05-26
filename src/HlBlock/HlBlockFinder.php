@@ -182,7 +182,7 @@ class HlBlockFinder extends Finder
             throw new ValueNotFoundException('HlBlock', 'ID #' . $this->id);
         }
 
-        $this->registerCacheTag(self::$cacheTag);
+        $this->registerCacheTag(static::$cacheTag);
 
         return $items;
     }
@@ -193,6 +193,6 @@ class HlBlockFinder extends Finder
      */
     public static function onAfterSomething(Event $event)
     {
-        static::deleteCacheByTag(self::$cacheTag);
+        static::deleteCacheByTag(static::$cacheTag);
     }
 }
