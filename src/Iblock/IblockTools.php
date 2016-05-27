@@ -1,8 +1,7 @@
 <?php
 /**
- * @link https://github.com/bitrix-expert/tools
- * @copyright Copyright © 2015 Nik Samokhvalov
- * @license MIT
+ * For the full copyright and license information, please view the LICENSE.md
+ * file that was distributed with this source code.
  */
 
 namespace Bex\Tools\Iblock;
@@ -22,7 +21,7 @@ class IblockTools
      *
      * @param string $type Iblock type
      * @param string $code Iblock code
-     * @param bool $silenceMode When you use silence mode instead of an exception \Bex\Tools\ValueNotFoundException 
+     * @param bool $silenceMode When you use silence mode instead of an exception \Bex\Tools\ValueNotFoundException
      * (if value was be not found) is returned null.
      *
      * @return IblockFinder
@@ -30,7 +29,7 @@ class IblockTools
     public static function find($type, $code, $silenceMode = false)
     {
         return new IblockFinder(
-            ['type' => $type, 'code' => $code], 
+            ['type' => $type, 'code' => $code],
             $silenceMode
         );
     }
@@ -39,7 +38,7 @@ class IblockTools
      * Gets Finder for iblock by iblock ID.
      *
      * @param int $id Iblock ID
-     * @param bool $silenceMode When you use silence mode instead of an exception \Bex\Tools\ValueNotFoundException 
+     * @param bool $silenceMode When you use silence mode instead of an exception \Bex\Tools\ValueNotFoundException
      * (if value was be not found) is returned null.
      *
      * @return IblockFinder
@@ -47,7 +46,7 @@ class IblockTools
     public static function findById($id, $silenceMode = false)
     {
         return new IblockFinder(
-            ['id' => $id], 
+            ['id' => $id],
             $silenceMode
         );
     }
@@ -63,9 +62,9 @@ class IblockTools
     }
 
     /**
-     * Validation code of the info block. If code not valid (empty string or code alredy used) will be throw 
+     * Validation code of the info block. If code not valid (empty string or code alredy used) will be throw
      * Bitrix exception.
-     * 
+     *
      * @param string $type
      * @param string $code
      * @param null $iblockId
@@ -75,9 +74,8 @@ class IblockTools
     protected static function validateCode($type, $code, $iblockId = null)
     {
         global $APPLICATION;
-        
-        if (is_null($code))
-        {
+
+        if (is_null($code)) {
             // if code of info block is not updated
             return true;
         }
@@ -85,9 +83,8 @@ class IblockTools
         try {
             $type = trim($type);
             $code = trim($code);
-            
-            if (strlen($code) <= 0)
-            {
+
+            if (strlen($code) <= 0) {
                 throw new \Exception('EMPTY_CODE');
             }
 
@@ -96,8 +93,7 @@ class IblockTools
                 ->setSelect(['ID'])
                 ->exec();
 
-            if ($rsSimilarIblock->getSelectedRowsCount() > 0)
-            {
+            if ($rsSimilarIblock->getSelectedRowsCount() > 0) {
                 throw new \Exception('CODE_ALREDY_USED');
             }
 

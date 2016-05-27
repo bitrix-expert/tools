@@ -1,8 +1,7 @@
 <?php
 /**
- * @link https://github.com/bitrix-expert/tools
- * @copyright Copyright © 2015 Nik Samokhvalov
- * @license MIT
+ * For the full copyright and license information, please view the LICENSE.md
+ * file that was distributed with this source code.
  */
 
 namespace Bex\Tools\Group;
@@ -15,7 +14,7 @@ use Bitrix\Main\GroupTable;
 
 /**
  * Finder of the users groups.
- * 
+ *
  * @author Nik Samokhvalov <nik@samokhvalov.info>
  */
 class GroupFinder extends Finder
@@ -33,23 +32,19 @@ class GroupFinder extends Finder
     public function __construct(array $filter, $silenceMode = false)
     {
         parent::__construct($filter, $silenceMode);
-        
+
         $filter = $this->prepareFilter($filter);
 
-        if (isset($filter['id']))
-        {
+        if (isset($filter['id'])) {
             $this->id = $filter['id'];
         }
 
-        if (isset($filter['code']))
-        {
+        if (isset($filter['code'])) {
             $this->code = $filter['code'];
         }
 
-        if (!isset($this->id))
-        {
-            if (!isset($this->code))
-            {
+        if (!isset($this->id)) {
+            if (!isset($this->code)) {
                 throw new ArgumentNullException('code');
             }
 
@@ -61,7 +56,7 @@ class GroupFinder extends Finder
 
     /**
      * Gets group ID.
-     * 
+     *
      * @return integer
      */
     public function id()
@@ -73,7 +68,7 @@ class GroupFinder extends Finder
 
     /**
      * Gets group code.
-     * 
+     *
      * @return string
      */
     public function code()
@@ -85,28 +80,22 @@ class GroupFinder extends Finder
 
     /**
      * @inheritdoc
-     * 
+     *
      * @throws ArgumentNullException
      */
     protected function prepareFilter(array $filter)
     {
-        foreach ($filter as $code => &$value)
-        {
-            if ($code === 'id')
-            {
+        foreach ($filter as $code => &$value) {
+            if ($code === 'id') {
                 intval($value);
 
-                if ($value <= 0)
-                {
+                if ($value <= 0) {
                     throw new ArgumentNullException($code);
                 }
-            }
-            else
-            {
+            } else {
                 trim(htmlspecialchars($value));
 
-                if (strlen($value) <= 0)
-                {
+                if (strlen($value) <= 0) {
                     throw new ArgumentNullException($code);
                 }
             }
@@ -120,18 +109,15 @@ class GroupFinder extends Finder
      */
     protected function getValue(array $cache, array $filter, $shard)
     {
-        switch ($filter['type'])
-        {
+        switch ($filter['type']) {
             case 'id':
-                if (isset($this->id))
-                {
+                if (isset($this->id)) {
                     return $this->id;
                 }
 
-                $value = (int) $cache['GROUPS_ID'][$this->code];
+                $value = (int)$cache['GROUPS_ID'][$this->code];
 
-                if ($value <= 0)
-                {
+                if ($value <= 0) {
                     throw new ValueNotFoundException('Group ID', 'group code "' . $this->code . '"');
                 }
                 break;
@@ -139,8 +125,7 @@ class GroupFinder extends Finder
             case 'code':
                 $value = $cache['GROUPS_CODE'][$this->id];
 
-                if (strlen($value) <= 0)
-                {
+                if (strlen($value) <= 0) {
                     throw new ValueNotFoundException('Group code', 'ID #' . $this->id);
                 }
                 break;
@@ -159,22 +144,19 @@ class GroupFinder extends Finder
     protected function getItems($shard)
     {
         $items = [];
-        
+
         $rsGroups = GroupTable::query()
             ->setSelect(['ID', 'STRING_ID'])
             ->exec();
 
-        while ($group = $rsGroups->fetch())
-        {
-            if ($group['STRING_ID'])
-            {
+        while ($group = $rsGroups->fetch()) {
+            if ($group['STRING_ID']) {
                 $items['GROUPS_ID'][$group['STRING_ID']] = $group['ID'];
                 $items['GROUPS_CODE'][$group['ID']] = $group['STRING_ID'];
             }
         }
 
-        if (!empty($items))
-        {
+        if (!empty($items)) {
             Application::getInstance()->getTaggedCache()->registerTag(static::getCacheTag());
         }
 
@@ -183,7 +165,7 @@ class GroupFinder extends Finder
 
     /**
      * Gets tag of cache.
-     * 
+     *
      * @return string
      */
     public static function getCacheTag()
@@ -193,7 +175,7 @@ class GroupFinder extends Finder
 
     /**
      * Sets tag for cache.
-     * 
+     *
      * @param string $tag
      */
     public static function setCacheTag($tag)
@@ -231,7 +213,7 @@ class GroupFinder extends Finder
     {
         static::deleteCacheByTag(static::getCacheTag());
     }
-    
+
     /**
      * @deprecated
      * @see Finder::deleteCacheByTag()
@@ -240,8 +222,7 @@ class GroupFinder extends Finder
     {
         global $CACHE_MANAGER;
 
-        if (defined('BX_COMP_MANAGED_CACHE'))
-        {
+        if (defined('BX_COMP_MANAGED_CACHE')) {
             $CACHE_MANAGER->ClearByTag(static::getCacheTag());
         }
     }
