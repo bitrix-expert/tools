@@ -1,8 +1,7 @@
 <?php
 /**
- * @link https://github.com/bitrix-expert/tools
- * @copyright Copyright © 2015 Nik Samokhvalov
- * @license MIT
+ * For the full copyright and license information, please view the LICENSE.md
+ * file that was distributed with this source code.
  */
 
 namespace Bex\Tools\HlBlock;
@@ -18,7 +17,7 @@ class HlBlockTools
      * Gets Finder for hlblock by it's name
      *
      * @param string $name HlBlock name
-     * @param bool $silenceMode When you use silence mode instead of an exception \Bex\Tools\ValueNotFoundException 
+     * @param bool $silenceMode When you use silence mode instead of an exception \Bex\Tools\ValueNotFoundException
      * (if value was be not found) is returned null.
      *
      * @return HlBlockFinder
@@ -35,7 +34,7 @@ class HlBlockTools
      * Gets Finder for HlBlock by it's ID.
      *
      * @param int $id HlBlock ID
-     * @param bool $silenceMode When you use silence mode instead of an exception \Bex\Tools\ValueNotFoundException 
+     * @param bool $silenceMode When you use silence mode instead of an exception \Bex\Tools\ValueNotFoundException
      * (if value was be not found) is returned null.
      *
      * @return HlBlockFinder

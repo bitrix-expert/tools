@@ -1,8 +1,7 @@
 <?php
 /**
- * @link https://github.com/bitrix-expert/tools
- * @copyright Copyright © 2015 Nik Samokhvalov
- * @license MIT
+ * For the full copyright and license information, please view the LICENSE.md
+ * file that was distributed with this source code.
  */
 
 namespace Bex\Tools\HlBlock;
@@ -36,26 +35,21 @@ class HlBlockFinder extends Finder
      */
     public function __construct(array $filter, $silenceMode = false)
     {
-        if (!Loader::includeModule('highloadblock'))
-        {
+        if (!Loader::includeModule('highloadblock')) {
             throw new LoaderException('Failed include module "highloadblock"');
         }
-        
+
         parent::__construct($filter, $silenceMode);
 
         $filter = $this->prepareFilter($filter);
 
-        if (isset($filter['name']))
-        {
+        if (isset($filter['name'])) {
             $this->name = $filter['name'];
         }
 
-        if (isset($filter['id']))
-        {
+        if (isset($filter['id'])) {
             $this->id = $filter['id'];
-        }
-        else
-        {
+        } else {
             $this->id = $this->getFromCache(
                 ['type' => 'id']
             );
@@ -87,28 +81,22 @@ class HlBlockFinder extends Finder
 
     /**
      * @inheritdoc
-     * 
+     *
      * @throws ArgumentNullException Empty parameters in the filter
      */
     protected function prepareFilter(array $filter)
     {
-        foreach ($filter as $code => &$value)
-        {
-            if ($code === 'id')
-            {
+        foreach ($filter as $code => &$value) {
+            if ($code === 'id') {
                 intval($value);
 
-                if ($value <= 0)
-                {
+                if ($value <= 0) {
                     throw new ArgumentNullException($code);
                 }
-            }
-            else
-            {
+            } else {
                 trim(htmlspecialchars($value));
 
-                if (strlen($value) <= 0)
-                {
+                if (strlen($value) <= 0) {
                     throw new ArgumentNullException($code);
                 }
             }
@@ -125,18 +113,15 @@ class HlBlockFinder extends Finder
      */
     protected function getValue(array $cache, array $filter, $shard)
     {
-        switch ($filter['type'])
-        {
+        switch ($filter['type']) {
             case 'id':
-                if (isset($this->id))
-                {
+                if (isset($this->id)) {
                     return $this->id;
                 }
 
                 $value = (int)$cache[$this->name];
 
-                if ($value <= 0)
-                {
+                if ($value <= 0) {
                     throw new ValueNotFoundException('HlBlock ID', 'hlblock name "' . $this->name . '"');
                 }
 
@@ -146,8 +131,7 @@ class HlBlockFinder extends Finder
             case 'name':
                 $value = (string)$this->name;
 
-                if (strlen($value) <= 0)
-                {
+                if (strlen($value) <= 0) {
                     throw new ValueNotFoundException('HlBlock name', 'hlblock #' . $this->id);
                 }
 
@@ -172,13 +156,11 @@ class HlBlockFinder extends Finder
             ->setSelect(['NAME', 'ID'])
             ->exec();
 
-        while ($hlBlock = $dbHlBlocks->fetch())
-        {
-            $items[ $hlBlock['NAME'] ] = $hlBlock['ID'];
+        while ($hlBlock = $dbHlBlocks->fetch()) {
+            $items[$hlBlock['NAME']] = $hlBlock['ID'];
         }
 
-        if (empty($items))
-        {
+        if (empty($items)) {
             throw new ValueNotFoundException('HlBlock', 'ID #' . $this->id);
         }
 

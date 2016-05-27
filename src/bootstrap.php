@@ -1,11 +1,12 @@
 <?php
 /**
- * @link https://github.com/bitrix-expert/tools
- * @copyright Copyright © 2015 Nik Samokhvalov
- * @license MIT
+ * For the full copyright and license information, please view the LICENSE.md
+ * file that was distributed with this source code.
  */
 
-if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) return false;
+if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) {
+    return false;
+}
 
 $manager = \Bitrix\Main\EventManager::getInstance();
 
