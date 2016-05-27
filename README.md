@@ -35,6 +35,19 @@ $groupCode = GroupTools::findById(3)->code();
 // And that's not all ;-)
 ```
 
+* HlBlockTools: finder for highloadblock IDs by it's names.
+
+```php
+<?php
+use Bex\Tools\HlBlockTools;
+
+$hlBlockFinder = HlBlockTools::find('ReferenceName');
+
+$hlBlockId = $hlBlockFinder->id();
+$hlBlockName = HlBlockTools::findById(2)->name();
+
+```
+
 * Prevents the creation of infoblocks with the same codes.
 * Prevents the creation of user groups with the same string id.
 
