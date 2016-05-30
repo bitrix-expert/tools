@@ -13,6 +13,7 @@ use Bitrix\Iblock\PropertyEnumerationTable;
 use Bitrix\Iblock\PropertyTable;
 use Bitrix\Main\ArgumentException;
 use Bitrix\Main\ArgumentNullException;
+use Bitrix\Main\EventManager;
 use Bitrix\Main\Loader;
 use Bitrix\Main\LoaderException;
 
@@ -33,6 +34,7 @@ class IblockFinder extends Finder
     const CACHE_PROPS_SHARD = 'props';
 
     protected static $cacheDir = 'bex_tools/iblocks';
+    protected static $delayedIblocks = [];
     protected $id;
     protected $type;
     protected $code;
@@ -394,12 +396,26 @@ class IblockFinder extends Finder
         return $items;
     }
 
+    /**
+     * @param $iblockId
+     */
+    protected static function delayCacheCollector($iblockId)
+    {
+        static::$delayedIblocks[] = $iblockId;
+
+        //Collecting only lite cache
+        new static([]);
+        EventManager::getInstance()->addEventHandler(
+            'main', 'OnEpilog', [__CLASS__, 'onEpilog']
+        );
+
+    }
+
     public static function onAfterIBlockAdd(&$fields)
     {
         if ($fields['ID'] > 0) {
             static::deleteCacheByTag('bex_iblock_new');
-
-            static::runCacheCollector($fields['IBLOCK_TYPE_ID'], $fields['CODE']);
+            static::delayCacheCollector($fields['ID']);
         }
     }
 
@@ -408,8 +424,7 @@ class IblockFinder extends Finder
         if ($fields['RESULT']) {
             static::deleteCacheByTag('bex_iblock_' . $fields['ID']);
             static::deleteCacheByTag('bex_iblock_new');
-
-            static::runCacheCollector($fields['IBLOCK_TYPE_ID'], $fields['CODE']);
+            static::delayCacheCollector($fields['ID']);
         }
     }
 
@@ -419,5 +434,16 @@ class IblockFinder extends Finder
         static::deleteCacheByTag('bex_iblock_new');
 
         static::runCacheCollector();
+    }
+
+    public function onEpilog()
+    {
+        $iblockIds = static::$delayedIblocks;
+        if (!empty($iblockIds)) {
+            foreach ($iblockIds as $iblockId) {
+
+                (new static(['id' => $iblockId]))->code();
+            }
+        }
     }
 }
