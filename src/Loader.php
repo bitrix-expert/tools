@@ -57,7 +57,7 @@ class Loader
     protected function registerHandlers()
     {
         foreach ($this->getHandlers() as $handler) {
-            $this->eventManager->addEventHandler($handler[0], $handler[1], [$handler[2], $handler[3]]);
+            $this->eventManager->addEventHandler($handler[0], $handler[1], $handler[2], $handler[3]);
         }
     }
 
