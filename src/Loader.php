@@ -32,6 +32,8 @@ class Loader
         ['iblock', 'OnBeforeIBlockUpdate', ['\Bex\Tools\Iblock\IblockTools', 'onBeforeIBlockUpdate']],
         ['iblock', 'OnAfterIBlockAdd', ['\Bex\Tools\Iblock\IblockFinder', 'onAfterIBlockAdd']],
         ['iblock', 'OnAfterIBlockUpdate', ['\Bex\Tools\Iblock\IblockFinder', 'onAfterIBlockUpdate']],
+        ['iblock', 'OnAfterIBlockPropertyAdd', ['\Bex\Tools\Iblock\IblockFinder', 'onAfterIBlockPropertyAdd']],
+        ['iblock', 'OnAfterIBlockPropertyUpdate', ['\Bex\Tools\Iblock\IblockFinder', 'onAfterIBlockPropertyUpdate']],
         ['iblock', 'OnIBlockDelete', ['\Bex\Tools\Iblock\IblockFinder', 'onIBlockDelete']],
         ['highloadblock', '\Bitrix\Highloadblock\HighloadBlock::OnAdd', ['\Bex\Tools\HlBlock\HlBlockFinder', 'onAfterSomething']],
         ['highloadblock', '\Bitrix\Highloadblock\HighloadBlock::OnAfterUpdate', ['\Bex\Tools\HlBlock\HlBlockFinder', 'onAfterSomething']],

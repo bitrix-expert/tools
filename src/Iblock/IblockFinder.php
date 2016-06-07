@@ -165,6 +165,21 @@ class IblockFinder extends Finder
     }
 
     /**
+     * Preliminary collection of cache by id
+     *
+     * @param string|int|null $iblockId Identifier of info block
+     */
+    protected static function runCacheCollectorById($iblockId = null)
+    {
+        if (!$iblockId) {
+            return self::runCacheCollector();
+        }
+
+        $finder = new static(['id' => $iblockId]);
+        $finder->code();
+    }
+
+    /**
      * @inheritdoc
      *
      * @throws ArgumentNullException Empty parameters in the filter
@@ -433,16 +448,39 @@ class IblockFinder extends Finder
         static::deleteCacheByTag('bex_iblock_' . $id);
         static::deleteCacheByTag('bex_iblock_new');
 
-        static::runCacheCollector();
+        static::runCacheCollectorById($id);
     }
 
-    public function onEpilog()
+    public static function onAfterIBlockPropertyAdd(&$fields)
+    {
+        if ($fields['RESULT']) {
+            static::deleteCacheByTag('bex_iblock_' . $fields['IBLOCK_ID']);
+            static::deleteCacheByTag('bex_iblock_new');
+
+            self::runCacheCollectorById($fields['IBLOCK_ID']);
+        }
+    }
+
+    public static function onAfterIBlockPropertyUpdate(&$fields)
+    {
+        self::onAfterIBlockPropertyAdd($fields);
+    }
+
+    /**
+     * TODO when bitrix will support this event
+     */
+    public static function OnAfterIBlockPropertyDelete()
+    {
+
+    }
+
+    public static function onEpilog()
     {
         $iblockIds = static::$delayedIblocks;
         if (!empty($iblockIds)) {
             foreach ($iblockIds as $iblockId) {
 
-                (new static(['id' => $iblockId]))->code();
+                self::runCacheCollectorById($iblockId);
             }
         }
     }
