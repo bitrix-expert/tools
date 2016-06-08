@@ -416,14 +416,16 @@ class IblockFinder extends Finder
      */
     protected static function delayCacheCollector($iblockId)
     {
+        if (empty(static::$delayedIblocks)) {
+            EventManager::getInstance()->addEventHandler(
+                'main', 'OnEpilog', [get_called_class(), 'onEpilog']
+            );
+        }
+
         static::$delayedIblocks[] = $iblockId;
 
         //Collecting only lite cache
         new static([]);
-        EventManager::getInstance()->addEventHandler(
-            'main', 'OnEpilog', [get_called_class(), 'onEpilog']
-        );
-
     }
 
     public static function onAfterIBlockAdd(&$fields)
@@ -455,8 +457,6 @@ class IblockFinder extends Finder
     {
         if ($fields['RESULT']) {
             static::deleteCacheByTag('bex_iblock_' . $fields['IBLOCK_ID']);
-            static::deleteCacheByTag('bex_iblock_new');
-
             static::runCacheCollectorById($fields['IBLOCK_ID']);
         }
     }
@@ -478,6 +478,7 @@ class IblockFinder extends Finder
     {
         $iblockIds = static::$delayedIblocks;
         if (!empty($iblockIds)) {
+
             foreach ($iblockIds as $iblockId) {
 
                 static::runCacheCollectorById($iblockId);
