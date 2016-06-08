@@ -172,7 +172,7 @@ class IblockFinder extends Finder
     protected static function runCacheCollectorById($iblockId = null)
     {
         if (!$iblockId) {
-            return self::runCacheCollector();
+            return static::runCacheCollector();
         }
 
         $finder = new static(['id' => $iblockId]);
@@ -421,7 +421,7 @@ class IblockFinder extends Finder
         //Collecting only lite cache
         new static([]);
         EventManager::getInstance()->addEventHandler(
-            'main', 'OnEpilog', [__CLASS__, 'onEpilog']
+            'main', 'OnEpilog', [get_called_class(), 'onEpilog']
         );
 
     }
@@ -457,13 +457,13 @@ class IblockFinder extends Finder
             static::deleteCacheByTag('bex_iblock_' . $fields['IBLOCK_ID']);
             static::deleteCacheByTag('bex_iblock_new');
 
-            self::runCacheCollectorById($fields['IBLOCK_ID']);
+            static::runCacheCollectorById($fields['IBLOCK_ID']);
         }
     }
 
     public static function onAfterIBlockPropertyUpdate(&$fields)
     {
-        self::onAfterIBlockPropertyAdd($fields);
+        static::onAfterIBlockPropertyAdd($fields);
     }
 
     /**
@@ -480,7 +480,7 @@ class IblockFinder extends Finder
         if (!empty($iblockIds)) {
             foreach ($iblockIds as $iblockId) {
 
-                self::runCacheCollectorById($iblockId);
+                static::runCacheCollectorById($iblockId);
             }
         }
     }
