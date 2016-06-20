@@ -8,5 +8,4 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) {
     return false;
 }
 
-$manager = new \Bex\Tools\Loader();
-$manager->run();
+\Bex\Tools\Loader::initialize();

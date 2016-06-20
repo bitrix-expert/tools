@@ -16,13 +16,9 @@ use Bitrix\Main\EventManager;
 class Loader
 {
     /**
-     * @var EventManager
-     */
-    protected $eventManager;
-    /**
      * @var array Handlers of the Bex\Tools.
      */
-    private $handlers = [
+    private static $handlers = [
         ['main', 'OnBeforeGroupAdd', ['\Bex\Tools\Group\GroupTools', 'onBeforeGroupAdd']],
         ['main', 'OnBeforeGroupUpdate', ['\Bex\Tools\Group\GroupTools', 'onBeforeGroupUpdate']],
         ['main', 'OnAfterGroupAdd', ['\Bex\Tools\Group\GroupFinder', 'onAfterGroupAdd']],
@@ -39,37 +35,22 @@ class Loader
         ['highloadblock', '\Bitrix\Highloadblock\HighloadBlock::OnAfterUpdate', ['\Bex\Tools\HlBlock\HlBlockFinder', 'onAfterSomething']],
         ['highloadblock', '\Bitrix\Highloadblock\HighloadBlock::OnAfterDelete', ['\Bex\Tools\HlBlock\HlBlockFinder', 'onAfterSomething']]
     ];
-    
-    public function __construct()
-    {
-        $this->eventManager = EventManager::getInstance();
-    }
 
-    /**
-     * Runs loader.
-     */
-    public function run()
-    {
-        $this->registerHandlers();
-    }
+    protected static $isConfigurationLoaded = false;
     
     /**
-     * Register handlers of the Bitrix events.
+     * Initialize. Register handlers of the Bitrix events.
      */
-    protected function registerHandlers()
+    public static function initialize()
     {
-        foreach ($this->getHandlers() as $handler) {
-            $this->eventManager->addEventHandler($handler[0], $handler[1], $handler[2], $handler[3]);
+        if (static::$isConfigurationLoaded === true) {
+            return;
         }
-    }
+        
+        foreach (static::$handlers as $handler) {
+            EventManager::getInstance()->addEventHandler($handler[0], $handler[1], $handler[2], $handler[3]);
+        }
 
-    /**
-     * Gets event handlers of the Bex\Tools.
-     * 
-     * @return array
-     */
-    public function getHandlers()
-    {
-        return (array) $this->handlers;
+        static::$isConfigurationLoaded = true;
     }
 }

@@ -423,9 +423,6 @@ class IblockFinder extends Finder
         }
 
         static::$delayedIblocks[] = $iblockId;
-
-        //Collecting only lite cache
-        new static([]);
     }
 
     public static function onAfterIBlockAdd(&$fields)
@@ -477,10 +474,9 @@ class IblockFinder extends Finder
     public static function onEpilog()
     {
         $iblockIds = static::$delayedIblocks;
+        
         if (!empty($iblockIds)) {
-
             foreach ($iblockIds as $iblockId) {
-
                 static::runCacheCollectorById($iblockId);
             }
         }
