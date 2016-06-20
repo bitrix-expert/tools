@@ -13,6 +13,7 @@ use Bitrix\Iblock\PropertyEnumerationTable;
 use Bitrix\Iblock\PropertyTable;
 use Bitrix\Main\ArgumentException;
 use Bitrix\Main\ArgumentNullException;
+use Bitrix\Main\EventManager;
 use Bitrix\Main\Loader;
 use Bitrix\Main\LoaderException;
 
@@ -33,6 +34,7 @@ class IblockFinder extends Finder
     const CACHE_PROPS_SHARD = 'props';
 
     protected static $cacheDir = 'bex_tools/iblocks';
+    protected static $delayedIblocks = [];
     protected $id;
     protected $type;
     protected $code;
@@ -159,6 +161,21 @@ class IblockFinder extends Finder
         }
 
         $finder = new static(['type' => $iblockType, 'code' => $iblockCode]);
+        $finder->code();
+    }
+
+    /**
+     * Preliminary collection of cache by id
+     *
+     * @param string|int|null $iblockId Identifier of info block
+     */
+    protected static function runCacheCollectorById($iblockId = null)
+    {
+        if (!$iblockId) {
+            return static::runCacheCollector();
+        }
+
+        $finder = new static(['id' => $iblockId]);
         $finder->code();
     }
 
@@ -394,12 +411,28 @@ class IblockFinder extends Finder
         return $items;
     }
 
+    /**
+     * @param $iblockId
+     */
+    protected static function delayCacheCollector($iblockId)
+    {
+        if (empty(static::$delayedIblocks)) {
+            EventManager::getInstance()->addEventHandler(
+                'main', 'OnEpilog', [get_called_class(), 'onEpilog']
+            );
+        }
+
+        static::$delayedIblocks[] = $iblockId;
+
+        //Collecting only lite cache
+        new static([]);
+    }
+
     public static function onAfterIBlockAdd(&$fields)
     {
         if ($fields['ID'] > 0) {
             static::deleteCacheByTag('bex_iblock_new');
-
-            static::runCacheCollector($fields['IBLOCK_TYPE_ID'], $fields['CODE']);
+            static::delayCacheCollector($fields['ID']);
         }
     }
 
@@ -408,8 +441,7 @@ class IblockFinder extends Finder
         if ($fields['RESULT']) {
             static::deleteCacheByTag('bex_iblock_' . $fields['ID']);
             static::deleteCacheByTag('bex_iblock_new');
-
-            static::runCacheCollector($fields['IBLOCK_TYPE_ID'], $fields['CODE']);
+            static::delayCacheCollector($fields['ID']);
         }
     }
 
@@ -418,6 +450,39 @@ class IblockFinder extends Finder
         static::deleteCacheByTag('bex_iblock_' . $id);
         static::deleteCacheByTag('bex_iblock_new');
 
-        static::runCacheCollector();
+        static::runCacheCollectorById($id);
+    }
+
+    public static function onAfterIBlockPropertyAdd(&$fields)
+    {
+        if ($fields['RESULT']) {
+            static::deleteCacheByTag('bex_iblock_' . $fields['IBLOCK_ID']);
+            static::runCacheCollectorById($fields['IBLOCK_ID']);
+        }
+    }
+
+    public static function onAfterIBlockPropertyUpdate(&$fields)
+    {
+        static::onAfterIBlockPropertyAdd($fields);
+    }
+
+    /**
+     * TODO when bitrix will support this event
+     */
+    public static function OnAfterIBlockPropertyDelete()
+    {
+
+    }
+
+    public static function onEpilog()
+    {
+        $iblockIds = static::$delayedIblocks;
+        if (!empty($iblockIds)) {
+
+            foreach ($iblockIds as $iblockId) {
+
+                static::runCacheCollectorById($iblockId);
+            }
+        }
     }
 }
