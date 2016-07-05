@@ -1,5 +1,12 @@
 # Change log
 
+## 1.4
+
+* Added tools and finder for Highloadblock.
+* Added bootstrap class: `\Bex\Tools\Loader`.
+* Supported PSR 1/2.
+* Bugfix for removal and regeneration of the cache.
+
 ## 1.3
 
 * Advanced cache system.
