@@ -48,6 +48,19 @@ $hlBlockName = HlBlockTools::findById(2)->name();
 
 ```
 
+* CatalogGroupTools: finder for catalog groups (price types) by it's names? id's or "BASE" flag.
+
+```php
+<?php
+use Bex\Tools\CatalogGroupTools;
+
+$catalogGroupFinder = CatalogGroupTools::find('RETAIL');
+$priceTypeId = $catalogGroupFinder->id();
+
+$priceTypeName = CatalogGroupTools::findBase()->name();
+
+```
+
 * Prevents the creation of infoblocks with the same codes.
 * Prevents the creation of user groups with the same string id.
 
