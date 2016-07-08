@@ -429,6 +429,7 @@ class IblockFinder extends Finder
     {
         if ($fields['ID'] > 0) {
             static::deleteCacheByTag('bex_iblock_new');
+            new static(['type' => $fields['IBLOCK_TYPE_ID'], 'code' => $fields['CODE']]);
             static::delayCacheCollector($fields['ID']);
         }
     }
@@ -438,6 +439,7 @@ class IblockFinder extends Finder
         if ($fields['RESULT']) {
             static::deleteCacheByTag('bex_iblock_' . $fields['ID']);
             static::deleteCacheByTag('bex_iblock_new');
+            new static(['type' => $fields['IBLOCK_TYPE_ID'], 'code' => $fields['CODE']]);
             static::delayCacheCollector($fields['ID']);
         }
     }
