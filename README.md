@@ -52,7 +52,7 @@ $hlBlockName = HlBlockTools::findById(2)->name();
 
 ```php
 <?php
-use Bex\Tools\CatalogGroupTools;
+use Bex\Tools\Catalog\CatalogGroupTools;
 
 $catalogGroupFinder = CatalogGroupTools::find('RETAIL');
 $priceTypeId = $catalogGroupFinder->id();

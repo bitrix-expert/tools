@@ -4,10 +4,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Bex\Tools\CatalogGroup;
+namespace Bex\Tools\Catalog;
 
 /**
- * Tools for working with users groups.
+ * Tools for working with catalog groups.
  *
  * @author Mikhail Zhurov <mmjurov@gmail.com>
  */

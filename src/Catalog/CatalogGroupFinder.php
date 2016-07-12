@@ -4,7 +4,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Bex\Tools\CatalogGroup;
+namespace Bex\Tools\Catalog;
 
 use Bex\Tools\Finder;
 use Bex\Tools\ValueNotFoundException;
@@ -108,6 +108,16 @@ class CatalogGroupFinder extends Finder
     public static function onGroupDelete($id)
     {
         static::deleteCacheByTag(static::getCacheTag());
+    }
+
+    /**
+     * Gets tag of cache.
+     *
+     * @return string
+     */
+    public static function getCacheTag()
+    {
+        return static::$cacheTag;
     }
 
     /**
@@ -224,15 +234,5 @@ class CatalogGroupFinder extends Finder
         }
 
         return $items;
-    }
-
-    /**
-     * Gets tag of cache.
-     *
-     * @return string
-     */
-    public static function getCacheTag()
-    {
-        return static::$cacheTag;
     }
 }
