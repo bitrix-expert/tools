@@ -11,7 +11,7 @@ namespace Bex\Tools\Catalog;
  *
  * @author Mikhail Zhurov <mmjurov@gmail.com>
  */
-class CatalogGroupTools
+class GroupTools
 {
     /**
      * Gets Finder for catalog groups by group name.
@@ -20,11 +20,11 @@ class CatalogGroupTools
      * @param bool $silenceMode When you use silence mode instead of an exception \Bex\Tools\ValueNotFoundException
      * (if value was be not found) is returned null.
      *
-     * @return CatalogGroupFinder
+     * @return GroupFinder
      */
     public static function find($name, $silenceMode = false)
     {
-        return new CatalogGroupFinder(
+        return new GroupFinder(
             ['name' => $name],
             $silenceMode
         );
@@ -36,13 +36,11 @@ class CatalogGroupTools
      * @param int $id Group ID
      * @param bool $silenceMode When you use silence mode instead of an exception \Bex\Tools\ValueNotFoundException
      * (if value was be not found) is returned null.
-
-     * @return CatalogGroupFinder
+ * @return GroupFinder
      */
     public static function findById($id, $silenceMode = false)
     {
-        return new CatalogGroupFinder(
-            ['id' => $id],
+        return new GroupFinder(['id' => $id],
             $silenceMode
         );
     }
@@ -53,12 +51,11 @@ class CatalogGroupTools
      * @param bool $silenceMode When you use silence mode instead of an exception \Bex\Tools\ValueNotFoundException
      * (if value was be not found) is returned null.
      *
-     * @return CatalogGroupFinder
+     * @return GroupFinder
      */
     public static function findBase($silenceMode = false)
     {
-        return new CatalogGroupFinder(
-            ['base' => true],
+        return new GroupFinder(['base' => true],
             $silenceMode
         );
     }

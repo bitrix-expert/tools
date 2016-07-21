@@ -48,16 +48,16 @@ $hlBlockName = HlBlockTools::findById(2)->name();
 
 ```
 
-* CatalogGroupTools: finder for catalog groups (price types) by it's names? id's or "BASE" flag.
+* Catalog\GroupTools: finder for catalog groups (price types) by it's names? id's or "BASE" flag.
 
 ```php
 <?php
-use Bex\Tools\Catalog\CatalogGroupTools;
+use Bex\Tools\Catalog\GroupTools;
 
-$catalogGroupFinder = CatalogGroupTools::find('RETAIL');
+$catalogGroupFinder = GroupTools::find('RETAIL');
 $priceTypeId = $catalogGroupFinder->id();
 
-$priceTypeName = CatalogGroupTools::findBase()->name();
+$priceTypeName = GroupTools::findBase()->name();
 
 ```
 

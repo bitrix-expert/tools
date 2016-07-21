@@ -38,9 +38,9 @@ class Loader
         ['highloadblock', '\Bitrix\Highloadblock\HighloadBlock::OnAfterUpdate', ['\Bex\Tools\HlBlock\HlBlockFinder', 'onAfterSomething']],
         ['highloadblock', '\Bitrix\Highloadblock\HighloadBlock::OnAfterDelete', ['\Bex\Tools\HlBlock\HlBlockFinder', 'onAfterSomething']],
 
-        ['catalog', 'OnGroupAdd', ['\Bex\Tools\CatalogGroup\CatalogGroupFinder', 'onGroupAdd']],
-        ['catalog', 'OnGroupUpdate', ['\Bex\Tools\CatalogGroup\CatalogGroupFinder', 'onGroupUpdate']],
-        ['catalog', 'OnGroupDelete', ['\Bex\Tools\CatalogGroup\CatalogGroupFinder', 'onGroupDelete']]
+        ['catalog', 'OnGroupAdd', ['\Bex\Tools\CatalogGroup\GroupFinder', 'onGroupAdd']],
+        ['catalog', 'OnGroupUpdate', ['\Bex\Tools\CatalogGroup\GroupFinder', 'onGroupUpdate']],
+        ['catalog', 'OnGroupDelete', ['\Bex\Tools\CatalogGroup\GroupFinder', 'onGroupDelete']]
     ];
     
     /**

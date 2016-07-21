@@ -18,7 +18,7 @@ use Bitrix\Main\Loader;
  *
  * @author Mikhail Zhurov <mmjurov@gmail.com>
  */
-class CatalogGroupFinder extends Finder
+class GroupFinder extends Finder
 {
     protected static $cacheDir = 'bex_tools/catalog_groups';
     protected static $cacheTag = 'bex_catalog_groups';
