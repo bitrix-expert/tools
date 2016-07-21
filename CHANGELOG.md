@@ -1,5 +1,10 @@
 # Change log
 
+## 1.5
+
+* Added tools and finder for Catalog.
+* Fixed logic of collecting lite cache after add/update iblock.
+
 ## 1.4
 
 * Added tools and finder for Highloadblock.
