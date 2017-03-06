@@ -1,6 +1,11 @@
 # Change log
 
-## 1.5
+## 1.5.1
+### Fixed
+
+Fixed error on `onAfterIBlockUpdate`.
+
+## 1.5.0
 
 * Added tools and finder for Catalog.
 * Fixed logic of collecting lite cache after add/update iblock.
