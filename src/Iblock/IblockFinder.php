@@ -436,7 +436,7 @@ class IblockFinder extends Finder
 
     public static function onAfterIBlockUpdate(&$fields)
     {
-        if ($fields['RESULT']) {
+        if ($fields['RESULT'] && $fields['ID'] > 0) {
             static::deleteCacheByTag('bex_iblock_' . $fields['ID']);
             static::deleteCacheByTag('bex_iblock_new');
             new static(['id' => $fields['ID']]);
