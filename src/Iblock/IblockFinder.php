@@ -429,7 +429,7 @@ class IblockFinder extends Finder
     {
         if ($fields['ID'] > 0) {
             static::deleteCacheByTag('bex_iblock_new');
-            new static(['type' => $fields['IBLOCK_TYPE_ID'], 'code' => $fields['CODE']]);
+            new static(['id' => $fields['ID']]);
             static::delayCacheCollector($fields['ID']);
         }
     }
