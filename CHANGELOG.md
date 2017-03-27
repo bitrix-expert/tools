@@ -1,6 +1,11 @@
 # Change log
 
-## 1.5.1
+## 1.5.2 - 2017-03-27
+### Fixed
+
+Fixed errors on logic of cleaning cache of the info block.
+
+## 1.5.1 - 2017-03-06
 ### Fixed
 
 Fixed error on `onAfterIBlockUpdate`.
