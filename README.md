@@ -11,7 +11,7 @@ Tools for developers on Bitrix CMS:
 
 ```php
 <?php
-use Bex\Tools\IblockTools;
+use Bex\Tools\HlBlock\HlBlockTools;
 
 $iblockFinder = IblockTools::find('iblock_type', 'iblock_code');
 
