@@ -11,7 +11,7 @@ Tools for developers on Bitrix CMS:
 
 ```php
 <?php
-use Bex\Tools\HlBlock\HlBlockTools;
+use Bex\Tools\Iblock\IblockTools;
 
 $iblockFinder = IblockTools::find('iblock_type', 'iblock_code');
 
@@ -25,7 +25,7 @@ $propEnumId = $iblockFinder->propEnumId('PROP_CODE', 'VALUE_XML_ID');
 
 ```php
 <?php
-use Bex\Tools\GroupTools;
+use Bex\Tools\Group\GroupTools;
 
 $groupFinder = GroupTools::find('group_code');
 
@@ -39,7 +39,7 @@ $groupCode = GroupTools::findById(3)->code();
 
 ```php
 <?php
-use Bex\Tools\HlBlockTools;
+use Bex\Tools\HlBlock\HlBlockTools;
 
 $hlBlockFinder = HlBlockTools::find('ReferenceName');
 
